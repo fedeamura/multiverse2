@@ -1,5 +1,4 @@
 import { getSketch } from "../_sketch";
-import Colores from "../_colores";
 import Parametros from "../_parametros";
 import Recursos from "../_recursos";
 import State from "../_state";
@@ -8,6 +7,9 @@ import PisoAgua from "../Piso/agua";
 import Arbol from "../Arbol";
 import Flor from "../Flor";
 import Arbusto from "../Arbusto";
+
+//Rules
+import Rules_Player from "../Rules/Rules_Player";
 
 export default class Player {
   constructor(pos) {
@@ -22,6 +24,7 @@ export default class Player {
     this.hambre = 100;
     this.hambreMaxima = 100;
     this.arma = this.armaPico;
+    this.poderGolpe = undefined;
 
     this.puntosLeñador = 0;
     this.puntosJardinero = 0;
@@ -52,14 +55,13 @@ export default class Player {
     this.puedeGolpear = true;
 
     this.golpeando = false;
-    this.nadando =
-      State.itemMapa instanceof PisoAgua && State.itemMapa.profundidad > 1;
+    this.nadando = State.itemMapa instanceof PisoAgua && State.itemMapa.profundidad > 1;
   }
 
   restarSalud(cantidad) {
     this.salud -= cantidad;
     if (this.salud < 0) this.salud = 0;
-    if (this.salud == 0) {
+    if (this.salud === 0) {
       console.log("Muerto por no tener salud");
       getSketch().noLoop();
       return;
@@ -73,11 +75,12 @@ export default class Player {
 
   sumarHambre() {
     this.hambre -= 0.1;
-    // if (this.hambre >= 100) {
-    //   console.log("Muerto de hambre");
-    //   noLoop();
-    //   return;
-    // }
+    if (this.hambre < 0) this.hambre = 0;
+    if (this.hambre === 0) {
+      console.log("Muerto de hambre");
+      getSketch().noLoop();
+      return;
+    }
   }
 
   restaurarHambre(cantidad) {
@@ -87,9 +90,9 @@ export default class Player {
 
   restarOxigeno() {
     this.oxigeno -= 0.2;
-    if (this.oxigeno <= 0) this.oxigeno = 0;
+    if (this.oxigeno < 0) this.oxigeno = 0;
 
-    if (this.oxigeno == 0) {
+    if (this.oxigeno === 0) {
       console.log("Muerto ahogado");
       getSketch().noLoop();
       return;
@@ -107,21 +110,13 @@ export default class Player {
     setTimeout(() => {
       this.puedeGolpear = true;
       this.golpeando = false;
+      this.poderGolpe = undefined;
     }, 200);
   }
 
   setDireccion(d) {
     this.dir = d;
     this.dirContador = 0;
-    console.log("Set direccion", d);
-    console.log("Contador", this.dirContador);
-  }
-
-  setCaminando(caminando) {
-    this.caminando = caminando;
-    if (caminando == false) {
-      this.dirContador = 0;
-    }
   }
 
   setNadando(nadando) {
@@ -131,23 +126,24 @@ export default class Player {
 
   mover(pos) {
     this.pos = pos;
-    this.nadando =
-      State.itemMapa instanceof PisoAgua && State.itemMapa.profundidad > 1;
+
+    let nadandoNuevo = Rules_Player.isNadando();
+    if (this.nadando != nadandoNuevo) this.dirContador = 0;
+    this.nadando = nadandoNuevo;
 
     if (this.dirContador == undefined) this.dirContador = 0;
     if (this.nadando == undefined) this.nadando = false;
 
     this.dirContador++;
     if (this.nadando) {
-      if (this.dirContador > 7) this.dirContador = 1;
+      if (this.dirContador > 6) this.dirContador = 0;
     } else {
-      if (this.dirContador > 10) this.dirContador = 1;
+      if (this.dir == "l" || this.dir == "r") {
+        if (this.dirContador > 9) this.dirContador = 0;
+      } else {
+        if (this.dirContador > 10) this.dirContador = 0;
+      }
     }
-
-    console.log("Dir", this.dir);
-    console.log("Contador", this.dirContador);
-
-    this.sumarHambre();
 
     //Huellas
     this.huellas.push({
@@ -158,16 +154,6 @@ export default class Player {
 
     if (this.huellas.length > 7) {
       this.huellas.shift();
-    }
-
-    //Oxigeno
-    let profundidad = State.itemMapa.bioma.profundidad || 1;
-    if (profundidad != 1) {
-      this.subirPuntoNadador();
-      this.restarOxigeno();
-    } else {
-      this.subirPuntoCorredor();
-      this.restaurarOxigeno();
     }
   }
 
@@ -182,11 +168,8 @@ export default class Player {
 
   subirPuntoCorredor() {
     this.puntosCorredor++;
-    let p =
-      this.puntosCorredor / this.puntosNecesariosCorredor(this.nivelCorredor);
-    if (
-      this.puntosCorredor > this.puntosNecesariosCorredor(this.nivelCorredor)
-    ) {
+    let p = this.puntosCorredor / this.puntosNecesariosCorredor(this.nivelCorredor);
+    if (this.puntosCorredor > this.puntosNecesariosCorredor(this.nivelCorredor)) {
       this.puntosCorredor = 0;
       this.nivelCorredor++;
       this.hambreMaxima += 0.5;
@@ -208,29 +191,6 @@ export default class Player {
     if (this.puntosJardinero > this.nextLevel(this.nivelJardinero)) {
       this.nivelJardinero++;
       //   Utils.nuevoMensaje("Jardinero nivel " + this.nivelJardinero);
-    }
-  }
-
-  onBloqueRoto(m) {
-    if (m instanceof Arbol) {
-      // if (m.recompensa != 1) Utils.nuevoMensaje(`+${m.recompensa} madera`);
-      // if (m.recompensa == 1) Utils.nuevoMensaje(`+${m.recompensa} madera`);
-      this.subirPuntoLeñador();
-      return;
-    }
-
-    if (m instanceof Flor) {
-      // if (m.recompensa != 1) Utils.nuevoMensaje(`+${m.recompensa} flores`);
-      // if (m.recompensa == 1) Utils.nuevoMensaje(`+${m.recompensa} flor`);
-      this.subirPuntoJardinero();
-      return;
-    }
-
-    if (m instanceof Arbusto) {
-      // if (m.recompensa != 1) Utils.nuevoMensaje(`+${m.recompensa} bayas`);
-      // if (m.recompensa == 1) Utils.nuevoMensaje(`+${m.recompensa} baya`);
-      this.subirPuntoJardinero();
-      return;
     }
   }
 
@@ -263,19 +223,27 @@ export default class Player {
   }
 
   nextLevel(level) {
-    return getSketch().ound((4 * getSketch().pow(level, 5)) / 5);
+    return getSketch().round((4 * getSketch().pow(level, 5)) / 5);
   }
 
   setArma(arma) {
     this.arma = arma;
   }
 
+  setPoderGolpe(poder) {
+    this.poderGolpe = poder;
+  }
+
+  dejarDeMover = () => {
+    this.dirContador = 0;
+  };
+
   show() {
     if (this.dirContador == undefined) this.dirContador = 0;
     if (this.golpeando == undefined) this.golpeando = false;
     if (this.nadando == undefined) this.nadando = false;
 
-    const canvasItemWidth = State.parametros.canvasItemWidth;
+    const canvasItemWidth = Parametros.canvasItemWidth;
     getSketch().fill(0);
     getSketch().noStroke();
 
@@ -285,10 +253,7 @@ export default class Player {
 
     //Brazo
     getSketch().angleMode(getSketch().DEGREES);
-    getSketch().translate(
-      this.playerPos.x + canvasItemWidth / 2,
-      this.playerPos.y + canvasItemWidth / 2
-    );
+    getSketch().translate(this.playerPos.x + canvasItemWidth / 2, this.playerPos.y + canvasItemWidth / 2);
     getSketch().scale(1);
 
     //Jugador
@@ -299,75 +264,51 @@ export default class Player {
       let imgPlayer;
 
       if (this.nadando) {
-        if (this.dirContador === 0)
-          imgPlayer = State.recursos.imagenes["playerArribaNadando1"];
-        if (this.dirContador !== 0)
-          imgPlayer =
-            State.recursos.imagenes["playerArribaNadando" + this.dirContador];
+        imgPlayer = Recursos.imagenes["playerArribaNadando" + this.dirContador];
       } else {
         //Brazo
         if (this.golpeando) {
           const brazo_w = canvasItemWidth * 0.6;
           const brazo_h = canvasItemWidth * 0.6;
-          const brazo_x = canvasItemWidth / 2 - brazo_w * 0.9;
+          const brazo_x = canvasItemWidth / 2 - brazo_w;
           const brazo_y = -canvasItemWidth / 2 - brazo_h * 0.2;
 
           let imgArma;
-          if (State.player.arma instanceof Hacha)
-            imgArma = State.recursos.imagenes.hacha1;
-          if (State.player.arma instanceof Pala)
-            imgArma = State.recursos.imagenes.pala1;
-          if (State.player.arma instanceof Pico)
-            imgArma = State.recursos.imagenes.pico1;
+          if (State.player.arma instanceof Hacha) imgArma = Recursos.imagenes.hacha1;
+          if (State.player.arma instanceof Pala) imgArma = Recursos.imagenes.pala1;
+          if (State.player.arma instanceof Pico) imgArma = Recursos.imagenes.pico1;
           if (imgArma) {
             getSketch().image(imgArma, brazo_x, brazo_y, brazo_w, brazo_h);
           }
         }
 
         if (this.golpeando) {
-          imgPlayer = State.recursos.imagenes.playerArribaGolpeando;
+          imgPlayer = Recursos.imagenes.playerArribaGolpeando;
         } else {
-          if (this.dirContador === 0)
-            imgPlayer = State.recursos.imagenes.playerArriba;
-          if (this.dirContador !== 0)
-            imgPlayer =
-              State.recursos.imagenes["playerArriba" + this.dirContador];
+          imgPlayer = Recursos.imagenes["playerArriba" + this.dirContador];
         }
       }
 
-      getSketch().image(
-        imgPlayer,
-        -canvasItemWidth / 2,
-        -canvasItemWidth / 2,
-        canvasItemWidth,
-        canvasItemWidth
-      );
+      getSketch().image(imgPlayer, -canvasItemWidth / 2, -canvasItemWidth / 2, canvasItemWidth, canvasItemWidth);
     }
 
     //abajo
     if (this.dir == "d") {
       let imgPlayer;
       if (this.nadando) {
-        if (this.dirContador === 0)
-          imgPlayer = State.recursos.imagenes["playerAbajoNadando1"];
-        if (this.dirContador !== 0)
-          imgPlayer =
-            State.recursos.imagenes["playerAbajoNadando" + this.dirContador];
+        imgPlayer = Recursos.imagenes["playerAbajoNadando" + this.dirContador];
       } else {
         //Brazo
         if (this.golpeando) {
           const brazo_w = canvasItemWidth * 0.6;
           const brazo_h = canvasItemWidth * 0.6;
-          const brazo_x = canvasItemWidth / 2 - brazo_w * 1.1;
+          const brazo_x = canvasItemWidth / 2 - brazo_w * 1;
           const brazo_y = -canvasItemWidth / 2 - brazo_h * 0.5;
 
           let imgArma;
-          if (State.player.arma instanceof Hacha)
-            imgArma = State.recursos.imagenes.hacha1;
-          if (State.player.arma instanceof Pala)
-            imgArma = State.recursos.imagenes.pala1;
-          if (State.player.arma instanceof Pico)
-            imgArma = State.recursos.imagenes.pico1;
+          if (State.player.arma instanceof Hacha) imgArma = Recursos.imagenes.hacha1;
+          if (State.player.arma instanceof Pala) imgArma = Recursos.imagenes.pala1;
+          if (State.player.arma instanceof Pico) imgArma = Recursos.imagenes.pico1;
           getSketch().rotate(180);
           if (imgArma) {
             getSketch().image(imgArma, brazo_x, brazo_y, brazo_w, brazo_h);
@@ -375,25 +316,15 @@ export default class Player {
         }
 
         if (this.golpeando) {
-          imgPlayer = State.recursos.imagenes.playerAbajoGolpeando;
+          imgPlayer = Recursos.imagenes.playerAbajoGolpeando;
         } else {
-          if (this.dirContador === 0)
-            imgPlayer = State.recursos.imagenes.playerAbajo;
-          if (this.dirContador !== 0)
-            imgPlayer =
-              State.recursos.imagenes["playerAbajo" + this.dirContador];
+          imgPlayer = Recursos.imagenes["playerAbajo" + this.dirContador];
         }
         if (this.golpeando) {
           getSketch().rotate(180);
         }
       }
-      getSketch().image(
-        imgPlayer,
-        -canvasItemWidth / 2,
-        -canvasItemWidth / 2,
-        canvasItemWidth,
-        canvasItemWidth
-      );
+      getSketch().image(imgPlayer, -canvasItemWidth / 2, -canvasItemWidth / 2, canvasItemWidth, canvasItemWidth);
     }
 
     //izquierda
@@ -401,28 +332,19 @@ export default class Player {
       let imgPlayer;
 
       if (this.nadando) {
-        if (this.dirContador === 0)
-          imgPlayer = State.recursos.imagenes["playerIzquierdaNadando1"];
-        if (this.dirContador !== 0)
-          imgPlayer =
-            State.recursos.imagenes[
-              "playerIzquierdaNadando" + this.dirContador
-            ];
+        imgPlayer = Recursos.imagenes["playerIzquierdaNadando" + this.dirContador];
       } else {
         //Brazo
         if (this.golpeando) {
           const brazo_w = canvasItemWidth * 0.6;
           const brazo_h = canvasItemWidth * 0.6;
-          const brazo_x = canvasItemWidth / 2 - brazo_w * 1.4;
+          const brazo_x = canvasItemWidth / 2 - brazo_w * 1.5;
           const brazo_y = -canvasItemWidth / 2 - brazo_h * 0.6;
 
           let imgArma;
-          if (State.player.arma instanceof Hacha)
-            imgArma = State.recursos.imagenes.hacha1;
-          if (State.player.arma instanceof Pala)
-            imgArma = State.recursos.imagenes.pala1;
-          if (State.player.arma instanceof Pico)
-            imgArma = State.recursos.imagenes.pico1;
+          if (State.player.arma instanceof Hacha) imgArma = Recursos.imagenes.hacha1;
+          if (State.player.arma instanceof Pala) imgArma = Recursos.imagenes.pala1;
+          if (State.player.arma instanceof Pico) imgArma = Recursos.imagenes.pico1;
           getSketch().rotate(-90);
           if (imgArma) {
             getSketch().image(imgArma, brazo_x, brazo_y, brazo_w, brazo_h);
@@ -430,54 +352,35 @@ export default class Player {
         }
 
         if (this.golpeando) {
-          imgPlayer = State.recursos.imagenes.playerIzquierdaGolpeando;
+          imgPlayer = Recursos.imagenes.playerIzquierdaGolpeando;
         } else {
-          if (this.dirContador === 0)
-            imgPlayer = State.recursos.imagenes["playerIzquierda" + 1];
-          if (this.dirContador !== 0)
-            imgPlayer =
-              State.recursos.imagenes["playerIzquierda" + this.dirContador];
+          imgPlayer = Recursos.imagenes["playerIzquierda" + this.dirContador];
         }
         if (this.golpeando) {
           getSketch().rotate(90);
         }
       }
 
-      getSketch().image(
-        imgPlayer,
-        -canvasItemWidth / 2,
-        -canvasItemWidth / 2,
-        canvasItemWidth,
-        canvasItemWidth
-      );
+      getSketch().image(imgPlayer, -canvasItemWidth / 2, -canvasItemWidth / 2, canvasItemWidth, canvasItemWidth);
     }
 
     //derecha
     if (this.dir == "r") {
       let imgPlayer;
       if (this.nadando) {
-        if (this.dirContador === 0)
-          imgPlayer = State.recursos.imagenes["playerIzquierdaNadando1"];
-        if (this.dirContador !== 0)
-          imgPlayer =
-            State.recursos.imagenes[
-              "playerIzquierdaNadando" + this.dirContador
-            ];
+        imgPlayer = Recursos.imagenes["playerIzquierdaNadando" + this.dirContador];
       } else {
         //Brazo
         if (this.golpeando) {
           const brazo_w = canvasItemWidth * 0.6;
           const brazo_h = canvasItemWidth * 0.6;
-          const brazo_x = canvasItemWidth / 2 - brazo_w * 1.05;
+          const brazo_x = canvasItemWidth / 2 - brazo_w * 1.1;
           const brazo_y = -canvasItemWidth / 2 - brazo_h * 0.6;
 
           let imgArma;
-          if (State.player.arma instanceof Hacha)
-            imgArma = State.recursos.imagenes.hacha1;
-          if (State.player.arma instanceof Pala)
-            imgArma = State.recursos.imagenes.pala1;
-          if (State.player.arma instanceof Pico)
-            imgArma = State.recursos.imagenes.pico1;
+          if (State.player.arma instanceof Hacha) imgArma = Recursos.imagenes.hacha1;
+          if (State.player.arma instanceof Pala) imgArma = Recursos.imagenes.pala1;
+          if (State.player.arma instanceof Pico) imgArma = Recursos.imagenes.pico1;
           getSketch().rotate(90);
           if (imgArma) {
             getSketch().image(imgArma, brazo_x, brazo_y, brazo_w, brazo_h);
@@ -485,13 +388,9 @@ export default class Player {
         }
 
         if (this.golpeando) {
-          imgPlayer = State.recursos.imagenes.playerIzquierdaGolpeando;
+          imgPlayer = Recursos.imagenes.playerIzquierdaGolpeando;
         } else {
-          if (this.dirContador === 0)
-            imgPlayer = State.recursos.imagenes["playerIzquierda" + 1];
-          if (this.dirContador !== 0)
-            imgPlayer =
-              State.recursos.imagenes["playerIzquierda" + this.dirContador];
+          imgPlayer = Recursos.imagenes["playerIzquierda" + this.dirContador];
         }
         if (this.golpeando) {
           getSketch().rotate(-90);
@@ -499,14 +398,20 @@ export default class Player {
       }
 
       getSketch().scale(-1, 1);
-      getSketch().image(
-        imgPlayer,
-        -canvasItemWidth / 2,
-        -canvasItemWidth / 2,
-        canvasItemWidth,
-        canvasItemWidth
-      );
+      getSketch().image(imgPlayer, -canvasItemWidth / 2, -canvasItemWidth / 2, canvasItemWidth, canvasItemWidth);
     }
+
+    // //Poder
+    // if (this.golpeando && this.poderGolpe != undefined) {
+    //   if (this.dir == "r") getSketch().scale(-1, 1);
+    //   if (this.dir == "l") getSketch().translate(-canvasItemWidth, canvasItemWidth / 2);
+    //   if (this.dir == "r") getSketch().translate(canvasItemWidth - 10, canvasItemWidth / 2);
+    //   if (this.dir == "u") getSketch().translate(0, -canvasItemWidth / 4);
+    //   if (this.dir == "d") getSketch().translate(-canvasItemWidth / 4, canvasItemWidth * 1.6);
+    //   getSketch().fill(255, 0, 0);
+    //   getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
+    //   getSketch().text(this.poderGolpe || "1", 0, -canvasItemWidth / 2);
+    // }
     getSketch().pop();
   }
 
@@ -554,27 +459,26 @@ export default class Player {
 }
 
 class Arma {
-  constructor(numero, poder, color) {
+  constructor(numero, color) {
     this.numero = numero;
-    this.poder = poder;
     this.color = color;
   }
 }
 
-class Pico extends Arma {
+export class Pico extends Arma {
   constructor() {
-    super(1, 1, getSketch().color(158, 158, 158));
+    super(1, getSketch().color(158, 158, 158));
   }
 }
 
-class Pala extends Arma {
+export class Pala extends Arma {
   constructor() {
-    super(2, 1, getSketch().color(76, 175, 80));
+    super(2, getSketch().color(76, 175, 80));
   }
 }
 
-class Hacha extends Arma {
+export class Hacha extends Arma {
   constructor() {
-    super(3, 1, getSketch().color(121, 85, 72));
+    super(3, getSketch().color(121, 85, 72));
   }
 }

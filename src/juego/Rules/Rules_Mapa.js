@@ -32,16 +32,14 @@ import FlorJardin from "../Flor/jardin";
 import Rules_Player from "./Rules_Player";
 
 const metodos = {
-  crearMapa: primeraVez => {
-    // if (primeraVez) {
-    //   State.mapa = [];
-    //   State.altura = [];
-    //   State.humedad = [];
-    //   State.seedAltura = getSketch().random(0, 10000000);
-    //   State.seedHumedad = getSketch().random(0, 10000000);
-    //   Rules_Player.reiniciarPosicion();
-    // }
-
+  initMapa: () => {
+    State.mapa = [];
+    State.altura = [];
+    State.humedad = [];
+    State.seedAltura = getSketch().random(0, 10000000);
+    State.seedHumedad = getSketch().random(0, 10000000);
+  },
+  crearMapa: () => {
     const mapaRows = Parametros.mapaRows;
     const mapaCols = Parametros.mapaCols;
     const canvasRows = Parametros.canvasRows;

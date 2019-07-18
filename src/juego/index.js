@@ -1,4 +1,4 @@
-import Sketch, { setSketch, getSketch } from "./_sketch";
+import { setSketch, getSketch } from "./_sketch";
 import Colores from "./_colores";
 import Parametros from "./_parametros";
 import Recursos from "./_recursos";
@@ -6,6 +6,7 @@ import State from "./_state";
 
 //
 import Player from "./Player";
+import HUD from "./Hud";
 
 //Rules
 import Rules_Player from "./Rules/Rules_Player";
@@ -33,15 +34,14 @@ import ResourcePlayerIzquierda6 from "../resources/player/izquierda/6.png";
 import ResourcePlayerIzquierda7 from "../resources/player/izquierda/7.png";
 import ResourcePlayerIzquierda8 from "../resources/player/izquierda/8.png";
 import ResourcePlayerIzquierda9 from "../resources/player/izquierda/9.png";
-import ResourcePlayerIzquierda10 from "../resources/player/izquierda/10.png";
 import ResourcePlayerIzquierdaGolpe from "../resources/player/izquierda/golpe.png";
+import ResourcePlayerIzquierdaNadando0 from "../resources/player/izquierda/nadando/0.png";
 import ResourcePlayerIzquierdaNadando1 from "../resources/player/izquierda/nadando/1.png";
 import ResourcePlayerIzquierdaNadando2 from "../resources/player/izquierda/nadando/2.png";
 import ResourcePlayerIzquierdaNadando3 from "../resources/player/izquierda/nadando/3.png";
 import ResourcePlayerIzquierdaNadando4 from "../resources/player/izquierda/nadando/4.png";
 import ResourcePlayerIzquierdaNadando5 from "../resources/player/izquierda/nadando/5.png";
 import ResourcePlayerIzquierdaNadando6 from "../resources/player/izquierda/nadando/6.png";
-import ResourcePlayerIzquierdaNadando7 from "../resources/player/izquierda/nadando/7.png";
 
 import ResourcePlayerAbajo0 from "../resources/player/abajo/0.png";
 import ResourcePlayerAbajo1 from "../resources/player/abajo/1.png";
@@ -55,13 +55,13 @@ import ResourcePlayerAbajo8 from "../resources/player/abajo/8.png";
 import ResourcePlayerAbajo9 from "../resources/player/abajo/9.png";
 import ResourcePlayerAbajo10 from "../resources/player/abajo/10.png";
 import ResourcePlayerAbajoGolpe from "../resources/player/abajo/golpe.png";
+import ResourcePlayerAbajoNadando0 from "../resources/player/abajo/nadando/0.png";
 import ResourcePlayerAbajoNadando1 from "../resources/player/abajo/nadando/1.png";
 import ResourcePlayerAbajoNadando2 from "../resources/player/abajo/nadando/2.png";
 import ResourcePlayerAbajoNadando3 from "../resources/player/abajo/nadando/3.png";
 import ResourcePlayerAbajoNadando4 from "../resources/player/abajo/nadando/4.png";
 import ResourcePlayerAbajoNadando5 from "../resources/player/abajo/nadando/5.png";
 import ResourcePlayerAbajoNadando6 from "../resources/player/abajo/nadando/6.png";
-import ResourcePlayerAbajoNadando7 from "../resources/player/abajo/nadando/7.png";
 
 import ResourcePlayerArriba0 from "../resources/player/arriba/0.png";
 import ResourcePlayerArriba1 from "../resources/player/arriba/1.png";
@@ -75,13 +75,13 @@ import ResourcePlayerArriba8 from "../resources/player/arriba/8.png";
 import ResourcePlayerArriba9 from "../resources/player/arriba/9.png";
 import ResourcePlayerArriba10 from "../resources/player/arriba/10.png";
 import ResourcePlayerArribaGolpe from "../resources/player/arriba/golpe.png";
+import ResourcePlayerArribaNadando0 from "../resources/player/arriba/nadando/0.png";
 import ResourcePlayerArribaNadando1 from "../resources/player/arriba/nadando/1.png";
 import ResourcePlayerArribaNadando2 from "../resources/player/arriba/nadando/2.png";
 import ResourcePlayerArribaNadando3 from "../resources/player/arriba/nadando/3.png";
 import ResourcePlayerArribaNadando4 from "../resources/player/arriba/nadando/4.png";
 import ResourcePlayerArribaNadando5 from "../resources/player/arriba/nadando/5.png";
 import ResourcePlayerArribaNadando6 from "../resources/player/arriba/nadando/6.png";
-import ResourcePlayerArribaNadando7 from "../resources/player/arriba/nadando/7.png";
 
 const sketch = p => {
   p.preload = () => {
@@ -117,7 +117,7 @@ const sketch = p => {
     Recursos.imagenes.pico2 = p.loadImage(ResourceArmaPico2);
     Recursos.imagenes.pico3 = p.loadImage(ResourceArmaPico3);
 
-    Recursos.imagenes.playerIzquierda = p.loadImage(ResourcePlayerIzquierda0);
+    Recursos.imagenes.playerIzquierda0 = p.loadImage(ResourcePlayerIzquierda0);
     Recursos.imagenes.playerIzquierda1 = p.loadImage(ResourcePlayerIzquierda1);
     Recursos.imagenes.playerIzquierda2 = p.loadImage(ResourcePlayerIzquierda2);
     Recursos.imagenes.playerIzquierda3 = p.loadImage(ResourcePlayerIzquierda3);
@@ -127,17 +127,16 @@ const sketch = p => {
     Recursos.imagenes.playerIzquierda7 = p.loadImage(ResourcePlayerIzquierda7);
     Recursos.imagenes.playerIzquierda8 = p.loadImage(ResourcePlayerIzquierda8);
     Recursos.imagenes.playerIzquierda9 = p.loadImage(ResourcePlayerIzquierda9);
-    Recursos.imagenes.playerIzquierda10 = p.loadImage(ResourcePlayerIzquierda10);
     Recursos.imagenes.playerIzquierdaGolpeando = p.loadImage(ResourcePlayerIzquierdaGolpe);
+    Recursos.imagenes.playerIzquierdaNadando0 = p.loadImage(ResourcePlayerIzquierdaNadando0);
     Recursos.imagenes.playerIzquierdaNadando1 = p.loadImage(ResourcePlayerIzquierdaNadando1);
     Recursos.imagenes.playerIzquierdaNadando2 = p.loadImage(ResourcePlayerIzquierdaNadando2);
     Recursos.imagenes.playerIzquierdaNadando3 = p.loadImage(ResourcePlayerIzquierdaNadando3);
     Recursos.imagenes.playerIzquierdaNadando4 = p.loadImage(ResourcePlayerIzquierdaNadando4);
     Recursos.imagenes.playerIzquierdaNadando5 = p.loadImage(ResourcePlayerIzquierdaNadando5);
     Recursos.imagenes.playerIzquierdaNadando6 = p.loadImage(ResourcePlayerIzquierdaNadando6);
-    Recursos.imagenes.playerIzquierdaNadando7 = p.loadImage(ResourcePlayerIzquierdaNadando7);
 
-    Recursos.imagenes.playerAbajo = p.loadImage(ResourcePlayerAbajo0);
+    Recursos.imagenes.playerAbajo0 = p.loadImage(ResourcePlayerAbajo0);
     Recursos.imagenes.playerAbajo1 = p.loadImage(ResourcePlayerAbajo1);
     Recursos.imagenes.playerAbajo2 = p.loadImage(ResourcePlayerAbajo2);
     Recursos.imagenes.playerAbajo3 = p.loadImage(ResourcePlayerAbajo3);
@@ -149,15 +148,15 @@ const sketch = p => {
     Recursos.imagenes.playerAbajo9 = p.loadImage(ResourcePlayerAbajo9);
     Recursos.imagenes.playerAbajo10 = p.loadImage(ResourcePlayerAbajo10);
     Recursos.imagenes.playerAbajoGolpeando = p.loadImage(ResourcePlayerAbajoGolpe);
+    Recursos.imagenes.playerAbajoNadando0 = p.loadImage(ResourcePlayerAbajoNadando0);
     Recursos.imagenes.playerAbajoNadando1 = p.loadImage(ResourcePlayerAbajoNadando1);
     Recursos.imagenes.playerAbajoNadando2 = p.loadImage(ResourcePlayerAbajoNadando2);
     Recursos.imagenes.playerAbajoNadando3 = p.loadImage(ResourcePlayerAbajoNadando3);
     Recursos.imagenes.playerAbajoNadando4 = p.loadImage(ResourcePlayerAbajoNadando4);
     Recursos.imagenes.playerAbajoNadando5 = p.loadImage(ResourcePlayerAbajoNadando5);
     Recursos.imagenes.playerAbajoNadando6 = p.loadImage(ResourcePlayerAbajoNadando6);
-    Recursos.imagenes.playerAbajoNadando7 = p.loadImage(ResourcePlayerAbajoNadando7);
 
-    Recursos.imagenes.playerArriba = p.loadImage(ResourcePlayerArriba0);
+    Recursos.imagenes.playerArriba0 = p.loadImage(ResourcePlayerArriba0);
     Recursos.imagenes.playerArriba1 = p.loadImage(ResourcePlayerArriba1);
     Recursos.imagenes.playerArriba2 = p.loadImage(ResourcePlayerArriba2);
     Recursos.imagenes.playerArriba3 = p.loadImage(ResourcePlayerArriba3);
@@ -169,13 +168,13 @@ const sketch = p => {
     Recursos.imagenes.playerArriba9 = p.loadImage(ResourcePlayerArriba9);
     Recursos.imagenes.playerArriba10 = p.loadImage(ResourcePlayerArriba10);
     Recursos.imagenes.playerArribaGolpeando = p.loadImage(ResourcePlayerArribaGolpe);
+    Recursos.imagenes.playerArribaNadando0 = p.loadImage(ResourcePlayerArribaNadando0);
     Recursos.imagenes.playerArribaNadando1 = p.loadImage(ResourcePlayerArribaNadando1);
     Recursos.imagenes.playerArribaNadando2 = p.loadImage(ResourcePlayerArribaNadando2);
     Recursos.imagenes.playerArribaNadando3 = p.loadImage(ResourcePlayerArribaNadando3);
     Recursos.imagenes.playerArribaNadando4 = p.loadImage(ResourcePlayerArribaNadando4);
     Recursos.imagenes.playerArribaNadando5 = p.loadImage(ResourcePlayerArribaNadando5);
     Recursos.imagenes.playerArribaNadando6 = p.loadImage(ResourcePlayerArribaNadando6);
-    Recursos.imagenes.playerArribaNadando7 = p.loadImage(ResourcePlayerArribaNadando7);
 
     Colores.agua1 = p.color(100, 181, 246);
     Colores.agua2 = p.color(66, 165, 245);
@@ -196,9 +195,12 @@ const sketch = p => {
 
     //Inventario
     // State.inventario = new Inventario();
-    // State.hud = new HUD();
+
+    //HUD
+    State.hud = new HUD();
 
     //Genero el mapa
+    Rules_Mapa.initMapa();
     Rules_Mapa.crearMapa();
 
     //Pos
@@ -210,16 +212,152 @@ const sketch = p => {
   };
 
   p.setup = () => {
-    p.createCanvas(600, 400, p.WEBGL);
+    p.frameRate(30);
+    let canvasWidth = Parametros.canvasItemWidth * Parametros.canvasRows;
+    let canvasHeight = Parametros.canvasItemHeight * Parametros.canvasCols;
+    p.createCanvas(canvasWidth, canvasHeight);
+  };
+
+  p.keyPressed = () => {
+    const key = p.key;
+
+    if (key == "1") {
+      const player = State.player;
+      player.setArma(player.armaPico);
+      return;
+    }
+
+    if (key == "2") {
+      const player = State.player;
+      player.setArma(player.armaPala);
+      return;
+    }
+
+    if (key == "3") {
+      const player = State.player;
+      player.setArma(player.armaHacha);
+      return;
+    }
+
+    if (key == "i") {
+      State.inventario.abierto = !State.inventario.abierto;
+      return;
+    }
+
+    if (key == " ") {
+      Rules_Player.golpear();
+      return;
+    }
+
+    if (key == "ArrowLeft") {
+      Rules_Player.mover("l");
+      return;
+    }
+
+    if (key == "ArrowRight") {
+      Rules_Player.mover("r");
+      return;
+    }
+
+    if (key == "ArrowDown") {
+      Rules_Player.mover("d");
+      return;
+    }
+
+    if (key == "ArrowUp") {
+      Rules_Player.mover("u");
+      return;
+    }
+  };
+
+  p.keyReleased = () => {
+    const key = p.key;
+
+    if (key == "ArrowLeft" || key == "ArrowRight" || key == "ArrowDown" || key == "ArrowUp") {
+      Rules_Player.dejarDeMover();
+    }
   };
 
   p.draw = () => {
-    p.background(100);
-    p.normalMaterial();
+    const player = State.player;
+    // const inventario = State.inventario;
+    const hud = State.hud;
+
+    const canvasRows = Parametros.canvasRows;
+    const canvasCols = Parametros.canvasCols;
+    const canvasItemWidth = Parametros.canvasItemWidth;
+    const canvasWidth = Parametros.canvasItemWidth * Parametros.canvasRows;
+    const canvasHeight = Parametros.canvasItemHeight * Parametros.canvasCols;
+    const mapaCols = Parametros.mapaCols;
+    const mapaRows = Parametros.mapaRows;
+
+    p.background(255);
+
+    // if (inventario.abierto == false) {
+    p.fill(0);
     p.noStroke();
-    p.push();
-    p.box(100);
-    p.pop();
+    p.rect(0, 0, canvasWidth, canvasHeight);
+
+    //Terreno
+    for (let i = 0; i < canvasRows; i++) {
+      for (let j = 0; j < canvasCols; j++) {
+        let mi = i + State.initialMapX + State.offsetX;
+        let mj = j + State.initialMapY + State.offsetY;
+
+        if (mi < 0 || mj < 0 || mi >= mapaRows || mj >= mapaCols) {
+          p.fill(255);
+          p.noStroke();
+          p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+        } else {
+          try {
+            let mapaItem = State.mapa[mi][mj];
+            mapaItem.draw(i, j, canvasItemWidth);
+
+            //Huellas
+            player.drawHuella(i, j, canvasItemWidth, mi, mj);
+
+            //Grilla
+            p.stroke(255, 10);
+            p.fill(0, 0);
+            p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+
+            //Item
+            if (mapaItem.item) {
+              mapaItem.item.draw(i, j, canvasItemWidth);
+            }
+          } catch (ex) {
+            p.fill(255);
+            p.noStroke();
+            p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+          }
+        }
+      }
+    }
+
+    // //Monstruos
+    // for (let i = 0; i < canvasRows; i++) {
+    //   for (let j = 0; j < canvasCols; j++) {
+    //     let mi = i + State.initialMapX + State.offsetX;
+    //     let mj = j + State.initialMapY + State.offsetY;
+
+    //     State.monstruos.forEach(monstruo => {
+    //       if (monstruo.muerto == true) return;
+    //       if (monstruo.i != mi || monstruo.j != mj) return;
+    //       monstruo.show(i * canvasItemWidth, j * canvasItemWidth);
+    //     });
+    //   }
+    // }
+
+    //HUD
+    hud.show();
+    // }
+
+    //Player
+    player.show();
+
+    //Inventario
+    // inventario.show();
   };
 };
+
 export default sketch;

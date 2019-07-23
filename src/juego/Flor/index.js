@@ -2,10 +2,11 @@ import Item from "../Item";
 
 export default class Flor extends Item {
   constructor(color) {
-    let bloquea = false;
-    let recompensa = 1;
-    let golpes = 1;
-    super(bloquea, recompensa, golpes);
+    const bloquea = false;
+    const recompensa = 1;
+    const vida = 1;
+    const vidaMaxima = 1;
+    super(bloquea, recompensa, vida, vidaMaxima);
     this.color = color;
   }
 }

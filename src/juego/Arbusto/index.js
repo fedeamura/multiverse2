@@ -5,10 +5,11 @@ import Item from "../Item";
 
 export default class Arbusto extends Item {
   constructor() {
-    let bloquear = false;
-    let golpes = 1;
-    let recompensa = getSketch().floor(getSketch().random(6, 13));
-    super(bloquear, golpes, recompensa);
+    const bloquear = false;
+    const recompensa = getSketch().floor(getSketch().random(6, 13));
+    const vida = 1;
+    const vidaMaxima = 1;
+    super(bloquear, recompensa, vida, vidaMaxima);
 
     this.tipo = getSketch().random([1, 2]);
     this.color = getSketch().random(["rojo", "azul", "violeta"]);
@@ -16,13 +17,7 @@ export default class Arbusto extends Item {
 
   draw(i, j, canvasItemWidth) {
     const img = this.getImagen();
-    getSketch().image(
-      img,
-      i * canvasItemWidth,
-      j * canvasItemWidth,
-      canvasItemWidth,
-      canvasItemWidth
-    );
+    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 
   getImagen() {

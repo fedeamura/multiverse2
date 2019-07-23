@@ -12,8 +12,9 @@ import HUD from "./Hud";
 import Rules_Player from "./Rules/Rules_Player";
 import Rules_Mapa from "./Rules/Rules_Mapa";
 
-import ResourcePisoMontaña1 from "../resources/piso/montaña/1.png";
-import ResourcePisoMontaña2 from "../resources/piso/montaña/2.png";
+// import ResourcePisoMontaña1 from "../resources/piso/montaña/1.png";
+// import ResourcePisoMontaña2 from "../resources/piso/montaña/2.png";
+
 import ResourceArmaHacha1 from "../resources/arma/hacha/1.png";
 import ResourceArmaHacha2 from "../resources/arma/hacha/2.png";
 import ResourceArmaHacha3 from "../resources/arma/hacha/3.png";
@@ -83,6 +84,9 @@ import ResourcePlayerArribaNadando4 from "../resources/player/arriba/nadando/4.p
 import ResourcePlayerArribaNadando5 from "../resources/player/arriba/nadando/5.png";
 import ResourcePlayerArribaNadando6 from "../resources/player/arriba/nadando/6.png";
 
+import ResourcePiedra1 from "../resources/piedra/1.png";
+import ResourcePiedra2 from "../resources/piedra/2.png";
+
 const sketch = p => {
   p.preload = () => {
     setSketch(p);
@@ -99,14 +103,7 @@ const sketch = p => {
     Recursos.imagenes.florVioleta = p.loadImage("https://i.imgur.com/SROeHea.png");
     Recursos.imagenes.florBlanca = p.loadImage("https://i.imgur.com/fNVHhz0.png");
     Recursos.imagenes.florAmarilla = p.loadImage("https://i.imgur.com/XD1xfaZ.png");
-    Recursos.imagenes.pisoBosque1 = p.loadImage("https://i.imgur.com/Eb34QsU.png");
-    Recursos.imagenes.pisoBosque2 = p.loadImage("https://i.imgur.com/fnoY2RW.png");
-    Recursos.imagenes.pisoLlanura1 = p.loadImage("https://i.imgur.com/Jcx3kHQ.png");
-    Recursos.imagenes.pisoLlanura2 = p.loadImage("https://i.imgur.com/Jcx3kHQ.png");
-    Recursos.imagenes.pisoJardin1 = p.loadImage("https://i.imgur.com/uKon1Qk.png");
-    Recursos.imagenes.pisoJardin2 = p.loadImage("https://i.imgur.com/uKon1Qk.png");
-    Recursos.imagenes.pisoMontaña1 = p.loadImage(ResourcePisoMontaña1);
-    Recursos.imagenes.pisoMontaña2 = p.loadImage(ResourcePisoMontaña2);
+
     Recursos.imagenes.hacha1 = p.loadImage(ResourceArmaHacha1);
     Recursos.imagenes.hacha2 = p.loadImage(ResourceArmaHacha2);
     Recursos.imagenes.hacha3 = p.loadImage(ResourceArmaHacha3);
@@ -176,16 +173,29 @@ const sketch = p => {
     Recursos.imagenes.playerArribaNadando5 = p.loadImage(ResourcePlayerArribaNadando5);
     Recursos.imagenes.playerArribaNadando6 = p.loadImage(ResourcePlayerArribaNadando6);
 
+    Recursos.imagenes.piedra1 = p.loadImage(ResourcePiedra1);
+    Recursos.imagenes.piedra2 = p.loadImage(ResourcePiedra2);
+
     Colores.agua1 = p.color(100, 181, 246);
     Colores.agua2 = p.color(66, 165, 245);
     Colores.agua3 = p.color(33, 150, 243);
     Colores.agua4 = p.color(30, 136, 229);
     Colores.agua5 = p.color(25, 118, 210);
     Colores.agua6 = p.color(21, 101, 192);
-    Colores.tierra = p.color(93, 64, 55);
+    Colores.tierra1 = p.color("#795548");
+    Colores.tierra2 = p.color("#6d4c41");
+    Colores.tierra3 = p.color("#5d4037");
+    Colores.pasto1 = p.color("#66bb6a");
+    Colores.pasto2 = p.color("#4caf50");
+    Colores.pasto3 = p.color("#43a047");
     Colores.arena = p.color(255, 236, 179);
-    Colores.nieve = p.color(227, 242, 253);
+    Colores.nieve = p.color(255);
+    Colores.nave = p.color("#FFD700");
+
     Colores.diamante = p.color(0, 255, 255);
+    Colores.piedra = p.color("#9e9e9e");
+    Colores.oro = p.color("#FFD700");
+
     Colores.colorSalud = p.color(100, 221, 23);
     Colores.colorHambre = p.color(229, 57, 53);
     Colores.colorOxigeno = p.color(3, 155, 229);
@@ -216,6 +226,7 @@ const sketch = p => {
     let canvasWidth = Parametros.canvasItemWidth * Parametros.canvasRows;
     let canvasHeight = Parametros.canvasItemHeight * Parametros.canvasCols;
     p.createCanvas(canvasWidth, canvasHeight);
+    p.background(255);
   };
 
   p.keyPressed = () => {
@@ -239,13 +250,18 @@ const sketch = p => {
       return;
     }
 
-    if (key == "i") {
-      State.inventario.abierto = !State.inventario.abierto;
-      return;
-    }
+    // if (key == "i") {
+    //   State.inventario.abierto = !State.inventario.abierto;
+    //   return;
+    // }
 
     if (key == " ") {
       Rules_Player.golpear();
+      return;
+    }
+
+    if (key == "m") {
+      Rules_Mapa.reiniciar();
       return;
     }
 
@@ -291,12 +307,20 @@ const sketch = p => {
     const mapaCols = Parametros.mapaCols;
     const mapaRows = Parametros.mapaRows;
 
-    p.background(255);
+    //Reiniciar mapa
+    if (State.reiniciandoMapa == true) {
+      p.fill(255);
+      p.noStroke();
+      p.rect(0, 0, canvasWidth, canvasHeight);
+
+      p.fill(0);
+      p.textAlign(getSketch().LEFT, getSketch().TOP);
+      p.text("Cargando planeta....", 0, 0);
+      return;
+    }
 
     // if (inventario.abierto == false) {
-    p.fill(0);
-    p.noStroke();
-    p.rect(0, 0, canvasWidth, canvasHeight);
+    // p.fill(0);
 
     //Terreno
     for (let i = 0; i < canvasRows; i++) {
@@ -316,14 +340,16 @@ const sketch = p => {
             //Huellas
             player.drawHuella(i, j, canvasItemWidth, mi, mj);
 
-            //Grilla
-            p.stroke(255, 10);
-            p.fill(0, 0);
-            p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+            // //Grilla
+            // p.stroke(255, 10);
+            // p.fill(0, 0);
+            // p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
 
             //Item
-            if (mapaItem.item) {
-              mapaItem.item.draw(i, j, canvasItemWidth);
+            if (mapaItem.items) {
+              mapaItem.items.forEach(element => {
+                element.draw(i, j, canvasItemWidth);
+              });
             }
           } catch (ex) {
             p.fill(255);

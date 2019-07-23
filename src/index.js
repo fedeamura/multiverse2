@@ -3,5 +3,15 @@ import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 import App from "./app";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const rootEl = document.getElementById("root");
+
+ReactDOM.render(<App />, rootEl);
+
+if (module.hot) {
+  module.hot.accept("./app", () => {
+    const NextApp = require("./app").default;
+    ReactDOM.render(<NextApp />, rootEl);
+  });
+}
+
 serviceWorker.unregister();

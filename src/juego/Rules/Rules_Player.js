@@ -6,8 +6,12 @@ import Parametros from "../_parametros";
 import PisoAgua from "../Piso/agua";
 import Flor from "../Flor";
 import Arbol from "../Arbol";
+import Nieve from "../Nieve";
+
 import { Hacha, Pico, Pala } from "../Player";
 import Arbusto from "../Arbusto";
+import Piedra from "../Piedra";
+import Oro from "../Oro";
 
 //Rules
 import Rules_Mapa from "../Rules/Rules_Mapa";
@@ -34,8 +38,8 @@ const metodos = {
     State.offsetX = 0;
     State.offsetY = 0;
     State.player.pos = metodos.calcularPosicion();
-    State.itemMapa = State.mapa[State.player.pos.x][State.player.pos.y];
-    State.player.nadando = metodos.isNadando();
+    State.player.dir = "d";
+    State.player.dirContador = 0;
   },
   isNadando: () => {
     return State.itemMapa instanceof PisoAgua && State.itemMapa.profundidad > 1;
@@ -163,29 +167,50 @@ const metodos = {
     }
 
     //Item
-    if (item.item == undefined) {
+    if (item.items == undefined || item.items.length == 0) {
       player.setPoderGolpe(poder);
       return;
     }
 
     const arma = player.arma;
-    const element = item.item;
+    const element = item.items[item.items.length - 1];
+
+    try {
+      let resultado = element.golpear();
+      if (resultado == false) return;
+    } catch (ex) {}
+
+    //Verifico que sea rompible
+    if (element.rompible == false) {
+      console.log("El objeto no se puede romper", element);
+      return;
+    }
+
     let poder = 0.5;
 
+    //Leñador
     if (arma instanceof Hacha && element instanceof Arbol) {
       poder = 1 + 0.5 * player.nivelLeñador;
     }
 
-    if (arma instanceof Pala && (element instanceof Arbusto || element instanceof Flor)) {
+    //Jardinero
+    if (arma instanceof Pala && (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve)) {
       poder = 1 + 0.5 * player.nivelJardinero;
     }
 
+    //Minero
+    if (arma instanceof Pico && (element instanceof Piedra || element instanceof Oro)) {
+      poder = 1 + 0.5 * player.nivelMinero;
+    }
+
+    //
+    console.log("Porder de golpe", poder);
     player.setPoderGolpe(poder);
 
     element.vida -= poder;
     if (element.vida < 0) element.vida = 0;
     if (element.vida == 0) {
-      item.item = undefined;
+      item.items = item.items.slice(0, item.items.length - 1);
 
       if (element instanceof Arbol) {
         if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} madera`);
@@ -205,6 +230,20 @@ const metodos = {
         if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} bayas`);
         if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} baya`);
         player.subirPuntoJardinero();
+        return;
+      }
+
+      if (element instanceof Piedra) {
+        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} piedras`);
+        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} piedra`);
+        player.subirPuntoMinero();
+        return;
+      }
+
+      if (element instanceof Oro) {
+        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} oro`);
+        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} oro`);
+        player.subirPuntoMinero();
         return;
       }
     }

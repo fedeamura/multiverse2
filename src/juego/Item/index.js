@@ -1,8 +1,9 @@
 export default class Item {
-  constructor(bloquear, golpes, recompensa) {
+  constructor(bloquear, recompensa, vida, vidaMaxima) {
+    this.rompible = true;
     this.bloquear = bloquear;
-    this.golpes = golpes;
-    this.vida = golpes;
     this.recompensa = recompensa;
+    this.vida = vida;
+    this.vidaMaxima = vidaMaxima;
   }
 }

@@ -28,11 +28,13 @@ export default class Player {
 
     this.puntosLeñador = 0;
     this.puntosJardinero = 0;
+    this.puntosMinero = 0;
     this.puntosNadador = 0;
     this.puntosCorredor = 0;
 
     this.nivelLeñador = 1;
     this.nivelJardinero = 1;
+    this.nivelMinero = 1;
     this.nivelNadador = 1;
     this.nivelCorredor = 1;
 
@@ -44,7 +46,7 @@ export default class Player {
     );
     this.pos = pos;
 
-    this.dir = "u";
+    this.dir = "d";
     this.dirContador = 0;
 
     this.timerRecuperacion;
@@ -194,7 +196,29 @@ export default class Player {
     }
   }
 
+  subirPuntoMinero() {
+    this.puntosMinero++;
+    if (this.puntosMinero > this.puntosNecesariosMinero(this.nivelMinero)) {
+      this.nivelMinero++;
+      //   Utils.nuevoMensaje("Jardinero nivel " + this.nivelJardinero);
+    }
+  }
+
   puntosNecesariosLeñador(nivel) {
+    if (nivel == 1) return 10;
+    if (nivel == 2) return 30;
+    if (nivel == 3) return 100;
+    if (nivel == 4) return 500;
+    if (nivel == 5) return 1000;
+    if (nivel == 6) return 2000;
+    if (nivel == 7) return 3000;
+    if (nivel == 8) return 6000;
+    if (nivel == 9) return 10000;
+    if (nivel == 10) return 15000;
+    return -1;
+  }
+
+  puntosNecesariosMinero(nivel) {
     if (nivel == 1) return 10;
     if (nivel == 2) return 30;
     if (nivel == 3) return 100;

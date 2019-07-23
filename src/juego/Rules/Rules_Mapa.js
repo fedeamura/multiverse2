@@ -27,11 +27,27 @@ import Arbusto from "../Arbusto";
 import FlorBosque from "../Flor/bosque";
 import FlorLlanura from "../Flor/llanura";
 import FlorJardin from "../Flor/jardin";
+import Nieve from "../Nieve";
+import Nave from "../Nave";
+import Piedra from "../Piedra";
+import Oro from "../Oro";
 
 //Rules
 import Rules_Player from "./Rules_Player";
 
 const metodos = {
+  reiniciar: () => {
+    State.reiniciandoMapa = true;
+    metodos.initMapa();
+    Rules_Player.reiniciarPosicion();
+    metodos.crearMapa();
+    State.itemMapa = State.mapa[State.player.pos.x][State.player.pos.y];
+    State.player.nadando = Rules_Player.isNadando();
+
+    setTimeout(() => {
+      State.reiniciandoMapa = false;
+    }, 1);
+  },
   initMapa: () => {
     State.mapa = [];
     State.altura = [];
@@ -72,19 +88,27 @@ const metodos = {
         let mj = j + State.initialMapY + State.offsetY;
 
         if (State.mapa[mi][mj] == undefined) {
-          let item;
+          let piso;
           let bioma;
 
           let pos = getSketch().createVector(mi, mj);
           let posPlayer = Rules_Player.calcularPosicion();
 
           let dx = pos.x - posPlayer.x;
-          if (dx < 0) dx *= -1;
+          // if (dx < 0) dx *= -1;
           let dy = pos.y - posPlayer.y;
-          if (dy < 0) dy *= -1;
-          if (dx < 2 && dy < 2) {
+          // if (dy < 0) dy *= -1;
+
+          if (dx < 2 && dx > -2 && (dy < 1 && dy > -3)) {
             bioma = new BiomaBase();
-            item = new PisoBase();
+            piso = new PisoBase(pos);
+
+            if (dx == 0 && dy == -1) {
+              const items = [];
+              piso = new PisoBase(pos, true);
+              items.push(new Nave());
+              piso.items = items;
+            }
           } else {
             let a = State.altura[mi][mj];
             let h = State.humedad[mi][mj];
@@ -92,71 +116,94 @@ const metodos = {
             bioma = metodos.calcularBioma(a, h);
 
             if (bioma instanceof BiomaOceano) {
-              item = new PisoAgua(pos, bioma.profundidad);
+              piso = new PisoAgua(pos, bioma.profundidad);
             }
 
             if (bioma instanceof BiomaMontaña) {
-              item = new PisoMontaña(pos, bioma.altura);
+              piso = new PisoMontaña(pos, bioma.altura);
+
+              const items = [];
+              if (getSketch().random() <= bioma.probabilidadNieve) {
+                items.push(new Nieve());
+              }
+
+              //Piedra
+              if (getSketch().random() <= bioma.probabilidadPiedra) {
+                items.push(new Piedra());
+              } else {
+                if (getSketch().random() <= bioma.probabilidadOro) {
+                  items.push(new Oro());
+                }
+              }
+
+              piso.items = items;
             }
 
             if (bioma instanceof BiomaPlaya) {
-              item = new PisoArena(pos);
+              piso = new PisoArena(pos);
             }
 
             if (bioma instanceof BiomaBosque) {
-              item = new PisoBosque(pos);
+              piso = new PisoBosque(pos);
 
+              const items = [];
               if (getSketch().random() <= bioma.probabilidadArbol) {
-                item.item = new Arbol();
+                items.push(new Arbol());
               } else {
                 if (getSketch().random() <= bioma.probabilidadArbusto) {
-                  item.item = new Arbusto();
+                  items.push(new Arbusto());
                 } else {
                   if (getSketch().random() <= bioma.probabilidadFlor) {
-                    item.item = new FlorBosque();
+                    items.push(new FlorBosque());
                   }
                 }
               }
+              piso.items = items;
             }
 
             if (bioma instanceof BiomaLlanura) {
-              item = new PisoLlanura(pos);
+              piso = new PisoLlanura(pos);
 
+              const items = [];
               if (getSketch().random() <= bioma.probabilidadArbol) {
-                item.item = new Arbol();
+                items.push(new Arbol());
               } else {
                 if (getSketch().random() <= bioma.probabilidadArbusto) {
-                  item.item = new Arbusto();
+                  items.push(new Arbusto());
                 } else {
                   if (getSketch().random() <= bioma.probabilidadFlor) {
-                    item.item = new FlorLlanura();
+                    items.push(new FlorLlanura());
                   }
                 }
               }
+              piso.items = items;
             }
 
             if (bioma instanceof BiomaJardin) {
-              item = new PisoJardin(pos);
+              piso = new PisoJardin(pos);
+
+              const items = [];
               if (getSketch().random() <= bioma.probabilidadArbol) {
-                item.item = new Arbol();
+                items.push(new Arbol());
               } else {
                 if (getSketch().random() <= bioma.probabilidadArbusto) {
-                  item.item = new Arbusto();
+                  items.push(new Arbusto());
                 } else {
                   if (getSketch().random() <= bioma.probabilidadFlor) {
-                    item.item = new FlorJardin();
+                    items.push(new FlorJardin());
                   }
                 }
               }
+              piso.items = items;
             }
 
             if (bioma instanceof BiomaDesierto) {
-              item = new PisoArena(pos);
+              piso = new PisoArena(pos);
             }
           }
 
-          item.bioma = bioma;
-          State.mapa[mi][mj] = item;
+          piso.bioma = bioma;
+          State.mapa[mi][mj] = piso;
         }
       }
     }
@@ -189,15 +236,23 @@ const metodos = {
       return new BiomaBosque();
     }
 
-    if (e < 0.7) {
+    if (e < 0.67) {
       return new BiomaMontaña(1);
     }
 
-    if (e < 0.85) {
+    if (e < 0.7) {
       return new BiomaMontaña(2);
     }
 
-    return new BiomaMontaña(3);
+    if (e < 0.75) {
+      return new BiomaMontaña(3);
+    }
+
+    if (e < 0.8) {
+      return new BiomaMontaña(4);
+    }
+
+    return new BiomaMontaña(5);
   },
   calcularHumedad: (i, j) => {
     let nx = i * 0.02;

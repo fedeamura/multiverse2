@@ -1,27 +1,24 @@
 import { getSketch } from "../_sketch";
-import Recursos from "../_recursos";
+import Colores from "../_colores";
 
 import Piso from "./index";
 
 export default class PisoMontaña extends Piso {
-  constructor(pos) {
-    super(pos, getSketch().color("#795548"));
-    this.tipo = getSketch().random(["1", "2"]);
+  constructor(pos, altura) {
+    super(pos, getColor(altura));
+    this.altura = altura;
   }
 
   draw(i, j, canvasItemWidth) {
-    let img = this.getImagen();
-    getSketch().image(
-      img,
-      i * canvasItemWidth,
-      j * canvasItemWidth,
-      canvasItemWidth,
-      canvasItemWidth
-    );
-  }
-
-  getImagen() {
-    if (this.tipo == "1") return Recursos.imagenes.pisoMontaña1;
-    return Recursos.imagenes.pisoMontaña2;
+    getSketch().fill(this.color);
+    getSketch().noStroke();
+    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 }
+
+const getColor = altura => {
+  if (altura == 1) return Colores.tierra1;
+  if (altura == 2) return Colores.tierra2;
+  if (altura == 3) return Colores.tierra3;
+  return Colores.tierra1;
+};

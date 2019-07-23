@@ -1,27 +1,16 @@
 import { getSketch } from "../_sketch";
-import Recursos from "../_recursos";
+import Colores from "../_colores";
 
 import Piso from "./index";
 
 export default class PisoJardin extends Piso {
   constructor(pos) {
-    super(pos, getSketch().color("#8bc34a"));
-    this.tipo = getSketch().random(["1", "2"]);
+    super(pos, Colores.pasto1);
   }
 
   draw(i, j, canvasItemWidth) {
-    let img = this.getImagen();
-    getSketch().image(
-      img,
-      i * canvasItemWidth,
-      j * canvasItemWidth,
-      canvasItemWidth,
-      canvasItemWidth
-    );
-  }
-
-  getImagen() {
-    if (this.tipo == "1") return Recursos.imagenes.pisoJardin1;
-    return Recursos.imagenes.pisoJardin2;
+    getSketch().fill(this.color);
+    getSketch().noStroke();
+    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 }

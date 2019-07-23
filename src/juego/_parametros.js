@@ -1,5 +1,5 @@
 const canvasRows = 13;
-const mapaRows = 101;
+const mapaRows = 201;
 const width = 40;
 
 const Parametros = {

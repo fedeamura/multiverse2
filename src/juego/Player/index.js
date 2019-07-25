@@ -1,15 +1,15 @@
-import { getSketch } from "../_sketch";
-import Parametros from "../_parametros";
-import Recursos from "../_recursos";
-import State from "../_state";
+import { getSketch } from "_sketch";
+import Parametros from "_parametros";
+import Recursos from "_recursos";
+import State from "_state";
 
-import PisoAgua from "../Piso/agua";
-import Arbol from "../Arbol";
-import Flor from "../Flor";
-import Arbusto from "../Arbusto";
+import PisoAgua from "juego/piso/agua";
+import Arbol from "juego/arbol";
+import Flor from "juego/flor";
+import Arbusto from "juego/arbusto";
 
-//Rules
-import Rules_Player from "../Rules/Rules_Player";
+//rules
+import Rules_Player from "rules/Rules_Player";
 
 export default class Player {
   constructor(pos) {
@@ -273,7 +273,7 @@ export default class Player {
 
     getSketch().push();
 
-    //Player
+    //player
 
     //Brazo
     getSketch().angleMode(getSketch().DEGREES);

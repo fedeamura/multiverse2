@@ -1,4 +1,4 @@
-import { getSketch } from "../_sketch";
+import { getSketch } from "_sketch";
 
 export default class Piso {
   constructor(pos, color) {

@@ -1,10 +1,10 @@
-import { getSketch } from "../_sketch";
-import Parametros from "../_parametros";
-import State from "../_state";
-import Colores from "../_colores";
-import Recursos from "../_recursos";
+import { getSketch } from "_sketch";
+import Parametros from "_parametros";
+import State from "_state";
+import Colores from "_colores";
+import Recursos from "_recursos";
 
-import { Pico, Pala, Hacha } from "../Player";
+import { Pico, Pala, Hacha } from "juego/player";
 
 export default class HUD {
   constructor() {
@@ -21,11 +21,12 @@ export default class HUD {
     const padding = 8;
     const borderRadius = 8;
 
-    //Player avatar
+    //player avatar
     const player_w = 40;
     const player_h = 40;
     const player_x = padding;
     const player_y = padding;
+    getSketch().noStroke();
     getSketch().fill(255);
     getSketch().rect(player_x, player_y, player_w, player_h, borderRadius);
 
@@ -35,7 +36,7 @@ export default class HUD {
     const barra_h = 8;
     const barra_padding = 4;
 
-    //Player salud
+    //player salud
     getSketch().stroke(0, 100);
     getSketch().fill(0, 100);
     getSketch().rect(barra_x, barra_y, barra_w, barra_h, borderRadius);
@@ -46,7 +47,7 @@ export default class HUD {
     getSketch().fill(Colores.colorSalud);
     getSketch().rect(barra_x, barra_y, this.saludW, barra_h, borderRadius);
 
-    //Player hambre
+    //player hambre
     const playerHambre_y = barra_y + barra_h + barra_padding;
     getSketch().stroke(0, 100);
     getSketch().fill(0, 100);
@@ -58,7 +59,7 @@ export default class HUD {
     getSketch().fill(Colores.colorHambre);
     getSketch().rect(barra_x, playerHambre_y, this.hambreW, barra_h, borderRadius);
 
-    //Player oxigeno
+    //player oxigeno
     const playerOxigeno_y = barra_y + barra_h + barra_padding + barra_h + barra_padding;
     getSketch().stroke(0, 100);
     getSketch().fill(0, 100);
@@ -80,6 +81,8 @@ export default class HUD {
       getSketch().rect(mensaje_x, mensaje_y, mensaje_w, mensaje_h, 8);
       getSketch().fill(0);
       getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
+      getSketch().textSize(12);
+      getSketch().noStroke();
       getSketch().text(State.mensaje, mensaje_x + 4, mensaje_y + 4);
     }
 

@@ -1,6 +1,6 @@
-import { getSketch } from "../_sketch";
+import { getSketch } from "_sketch";
 
-import Piso from "./index";
+import Piso from "juego/piso/index";
 
 export default class PisoBase extends Piso {
   constructor(pos, centro) {
@@ -11,6 +11,7 @@ export default class PisoBase extends Piso {
   draw(i, j, canvasItemWidth) {
     const x = i * canvasItemWidth;
     const y = j * canvasItemWidth;
+    getSketch().noStroke();
     getSketch().fill(this.color);
     getSketch().rect(x, y, canvasItemWidth, canvasItemWidth);
   }

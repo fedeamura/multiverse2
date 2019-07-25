@@ -1,7 +1,6 @@
-import { getSketch } from "../_sketch";
-import Colores from "../_colores";
-import Item from "../Item";
-import Recursos from "../_recursos";
+import { getSketch } from "_sketch";
+import Colores from "_colores";
+import Item from "juego/item";
 
 const VIDA_MAX = 10;
 
@@ -16,18 +15,13 @@ export default class Oro extends Item {
   }
 
   draw(i, j, canvasItemWidth) {
-    const img = getImagen(this.vida);
-    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().strokeWeight(2);
+    getSketch().stroke(0);
+    getSketch().fill(this.color);
+    getSketch().rect(i * canvasItemWidth + 4, j * canvasItemWidth + 4, canvasItemWidth - 8, canvasItemWidth - 8);
   }
-
-  golpear() {}
 }
 
-const getImagen = vida => {
-  if (vida > VIDA_MAX / 2) return Recursos.imagenes.piedra1;
-  return Recursos.imagenes.piedra2;
-};
-
 const getColor = () => {
-  return Colores.piedra;
+  return Colores.oro;
 };

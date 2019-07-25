@@ -1,7 +1,7 @@
-import { getSketch } from "../_sketch";
-import Colores from "../_colores";
+import { getSketch } from "_sketch";
+import Colores from "_colores";
 
-import Piso from "./index";
+import Piso from "juego/piso/index";
 
 export default class PisoArena extends Piso {
   constructor(pos) {

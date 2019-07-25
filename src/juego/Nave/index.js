@@ -1,8 +1,8 @@
-import { getSketch } from "../_sketch";
-import Colores from "../_colores";
-import Item from "../Item";
+import { getSketch } from "_sketch";
+import Colores from "_colores";
+import Item from "juego/item";
 
-import Rules_Mapa from "../Rules/Rules_Mapa";
+import Rules_Mapa from "rules/Rules_Mapa";
 
 export default class Nave extends Item {
   constructor() {
@@ -18,8 +18,10 @@ export default class Nave extends Item {
     getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 
-  golpear() {
+  golpear(poder) {
+    console.log("golpe nave");
     Rules_Mapa.reiniciar();
+    return false;
   }
 }
 

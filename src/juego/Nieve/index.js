@@ -1,6 +1,6 @@
-import { getSketch } from "../_sketch";
-import Colores from "../_colores";
-import Item from "../Item";
+import { getSketch } from "_sketch";
+import Colores from "_colores";
+import Item from "juego/item";
 
 export default class Nieve extends Item {
   constructor() {

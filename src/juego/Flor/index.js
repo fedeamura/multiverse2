@@ -1,4 +1,4 @@
-import Item from "../Item";
+import Item from "juego/item";
 
 export default class Flor extends Item {
   constructor(color) {

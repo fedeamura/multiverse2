@@ -1,29 +1,17 @@
-import { getSketch } from "../_sketch";
-import Recursos from "../_recursos";
+import { getSketch } from "_sketch";
+import Recursos from "_recursos";
 
-import Flor from "./index";
+import Flor from "juego/flor/index";
 
 export default class FlorJardin extends Flor {
   constructor() {
-    let color = getSketch().random([
-      "blanca",
-      "amarilla",
-      "azul",
-      "roja",
-      "violeta"
-    ]);
+    let color = getSketch().random(["blanca", "amarilla", "azul", "roja", "violeta"]);
     super(color);
   }
 
   draw(i, j, canvasItemWidth) {
     let img = this.getImagen();
-    getSketch().image(
-      img,
-      i * canvasItemWidth,
-      j * canvasItemWidth,
-      canvasItemWidth,
-      canvasItemWidth
-    );
+    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 
   getImagen() {

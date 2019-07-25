@@ -1,91 +1,92 @@
-import { setSketch, getSketch } from "./_sketch";
-import Colores from "./_colores";
-import Parametros from "./_parametros";
-import Recursos from "./_recursos";
-import State from "./_state";
+import { setSketch, getSketch } from "_sketch";
+import Colores from "_colores";
+import Parametros from "_parametros";
+import Recursos from "_recursos";
+import State from "_state";
 
 //
-import Player from "./Player";
-import HUD from "./Hud";
+import Player from "juego/player";
+import HUD from "juego/hud";
+import Menu from "juego/menu";
 
-//Rules
-import Rules_Player from "./Rules/Rules_Player";
-import Rules_Mapa from "./Rules/Rules_Mapa";
+//rules
+import Rules_Player from "rules/Rules_Player";
+import Rules_Mapa from "rules/Rules_Mapa";
 
 // import ResourcePisoMontaña1 from "../resources/piso/montaña/1.png";
 // import ResourcePisoMontaña2 from "../resources/piso/montaña/2.png";
 
-import ResourceArmaHacha1 from "../resources/arma/hacha/1.png";
-import ResourceArmaHacha2 from "../resources/arma/hacha/2.png";
-import ResourceArmaHacha3 from "../resources/arma/hacha/3.png";
-import ResourceArmaPico1 from "../resources/arma/pico/1.png";
-import ResourceArmaPico2 from "../resources/arma/pico/2.png";
-import ResourceArmaPico3 from "../resources/arma/pico/3.png";
-import ResourceArmaPala1 from "../resources/arma/pala/1.png";
-import ResourceArmaPala2 from "../resources/arma/pala/2.png";
-import ResourceArmaPala3 from "../resources/arma/pala/3.png";
+import ResourceArmaHacha1 from "resources/arma/hacha/1.png";
+import ResourceArmaHacha2 from "resources/arma/hacha/2.png";
+import ResourceArmaHacha3 from "resources/arma/hacha/3.png";
+import ResourceArmaPico1 from "resources/arma/pico/1.png";
+import ResourceArmaPico2 from "resources/arma/pico/2.png";
+import ResourceArmaPico3 from "resources/arma/pico/3.png";
+import ResourceArmaPala1 from "resources/arma/pala/1.png";
+import ResourceArmaPala2 from "resources/arma/pala/2.png";
+import ResourceArmaPala3 from "resources/arma/pala/3.png";
 
-import ResourcePlayerIzquierda0 from "../resources/player/izquierda/0.png";
-import ResourcePlayerIzquierda1 from "../resources/player/izquierda/1.png";
-import ResourcePlayerIzquierda2 from "../resources/player/izquierda/2.png";
-import ResourcePlayerIzquierda3 from "../resources/player/izquierda/3.png";
-import ResourcePlayerIzquierda4 from "../resources/player/izquierda/4.png";
-import ResourcePlayerIzquierda5 from "../resources/player/izquierda/5.png";
-import ResourcePlayerIzquierda6 from "../resources/player/izquierda/6.png";
-import ResourcePlayerIzquierda7 from "../resources/player/izquierda/7.png";
-import ResourcePlayerIzquierda8 from "../resources/player/izquierda/8.png";
-import ResourcePlayerIzquierda9 from "../resources/player/izquierda/9.png";
-import ResourcePlayerIzquierdaGolpe from "../resources/player/izquierda/golpe.png";
-import ResourcePlayerIzquierdaNadando0 from "../resources/player/izquierda/nadando/0.png";
-import ResourcePlayerIzquierdaNadando1 from "../resources/player/izquierda/nadando/1.png";
-import ResourcePlayerIzquierdaNadando2 from "../resources/player/izquierda/nadando/2.png";
-import ResourcePlayerIzquierdaNadando3 from "../resources/player/izquierda/nadando/3.png";
-import ResourcePlayerIzquierdaNadando4 from "../resources/player/izquierda/nadando/4.png";
-import ResourcePlayerIzquierdaNadando5 from "../resources/player/izquierda/nadando/5.png";
-import ResourcePlayerIzquierdaNadando6 from "../resources/player/izquierda/nadando/6.png";
+import ResourcePlayerIzquierda0 from "resources/player/izquierda/0.png";
+import ResourcePlayerIzquierda1 from "resources/player/izquierda/1.png";
+import ResourcePlayerIzquierda2 from "resources/player/izquierda/2.png";
+import ResourcePlayerIzquierda3 from "resources/player/izquierda/3.png";
+import ResourcePlayerIzquierda4 from "resources/player/izquierda/4.png";
+import ResourcePlayerIzquierda5 from "resources/player/izquierda/5.png";
+import ResourcePlayerIzquierda6 from "resources/player/izquierda/6.png";
+import ResourcePlayerIzquierda7 from "resources/player/izquierda/7.png";
+import ResourcePlayerIzquierda8 from "resources/player/izquierda/8.png";
+import ResourcePlayerIzquierda9 from "resources/player/izquierda/9.png";
+import ResourcePlayerIzquierdaGolpe from "resources/player/izquierda/golpe.png";
+import ResourcePlayerIzquierdaNadando0 from "resources/player/izquierda/nadando/0.png";
+import ResourcePlayerIzquierdaNadando1 from "resources/player/izquierda/nadando/1.png";
+import ResourcePlayerIzquierdaNadando2 from "resources/player/izquierda/nadando/2.png";
+import ResourcePlayerIzquierdaNadando3 from "resources/player/izquierda/nadando/3.png";
+import ResourcePlayerIzquierdaNadando4 from "resources/player/izquierda/nadando/4.png";
+import ResourcePlayerIzquierdaNadando5 from "resources/player/izquierda/nadando/5.png";
+import ResourcePlayerIzquierdaNadando6 from "resources/player/izquierda/nadando/6.png";
 
-import ResourcePlayerAbajo0 from "../resources/player/abajo/0.png";
-import ResourcePlayerAbajo1 from "../resources/player/abajo/1.png";
-import ResourcePlayerAbajo2 from "../resources/player/abajo/2.png";
-import ResourcePlayerAbajo3 from "../resources/player/abajo/3.png";
-import ResourcePlayerAbajo4 from "../resources/player/abajo/4.png";
-import ResourcePlayerAbajo5 from "../resources/player/abajo/5.png";
-import ResourcePlayerAbajo6 from "../resources/player/abajo/6.png";
-import ResourcePlayerAbajo7 from "../resources/player/abajo/7.png";
-import ResourcePlayerAbajo8 from "../resources/player/abajo/8.png";
-import ResourcePlayerAbajo9 from "../resources/player/abajo/9.png";
-import ResourcePlayerAbajo10 from "../resources/player/abajo/10.png";
-import ResourcePlayerAbajoGolpe from "../resources/player/abajo/golpe.png";
-import ResourcePlayerAbajoNadando0 from "../resources/player/abajo/nadando/0.png";
-import ResourcePlayerAbajoNadando1 from "../resources/player/abajo/nadando/1.png";
-import ResourcePlayerAbajoNadando2 from "../resources/player/abajo/nadando/2.png";
-import ResourcePlayerAbajoNadando3 from "../resources/player/abajo/nadando/3.png";
-import ResourcePlayerAbajoNadando4 from "../resources/player/abajo/nadando/4.png";
-import ResourcePlayerAbajoNadando5 from "../resources/player/abajo/nadando/5.png";
-import ResourcePlayerAbajoNadando6 from "../resources/player/abajo/nadando/6.png";
+import ResourcePlayerAbajo0 from "resources/player/abajo/0.png";
+import ResourcePlayerAbajo1 from "resources/player/abajo/1.png";
+import ResourcePlayerAbajo2 from "resources/player/abajo/2.png";
+import ResourcePlayerAbajo3 from "resources/player/abajo/3.png";
+import ResourcePlayerAbajo4 from "resources/player/abajo/4.png";
+import ResourcePlayerAbajo5 from "resources/player/abajo/5.png";
+import ResourcePlayerAbajo6 from "resources/player/abajo/6.png";
+import ResourcePlayerAbajo7 from "resources/player/abajo/7.png";
+import ResourcePlayerAbajo8 from "resources/player/abajo/8.png";
+import ResourcePlayerAbajo9 from "resources/player/abajo/9.png";
+import ResourcePlayerAbajo10 from "resources/player/abajo/10.png";
+import ResourcePlayerAbajoGolpe from "resources/player/abajo/golpe.png";
+import ResourcePlayerAbajoNadando0 from "resources/player/abajo/nadando/0.png";
+import ResourcePlayerAbajoNadando1 from "resources/player/abajo/nadando/1.png";
+import ResourcePlayerAbajoNadando2 from "resources/player/abajo/nadando/2.png";
+import ResourcePlayerAbajoNadando3 from "resources/player/abajo/nadando/3.png";
+import ResourcePlayerAbajoNadando4 from "resources/player/abajo/nadando/4.png";
+import ResourcePlayerAbajoNadando5 from "resources/player/abajo/nadando/5.png";
+import ResourcePlayerAbajoNadando6 from "resources/player/abajo/nadando/6.png";
 
-import ResourcePlayerArriba0 from "../resources/player/arriba/0.png";
-import ResourcePlayerArriba1 from "../resources/player/arriba/1.png";
-import ResourcePlayerArriba2 from "../resources/player/arriba/2.png";
-import ResourcePlayerArriba3 from "../resources/player/arriba/3.png";
-import ResourcePlayerArriba4 from "../resources/player/arriba/4.png";
-import ResourcePlayerArriba5 from "../resources/player/arriba/5.png";
-import ResourcePlayerArriba6 from "../resources/player/arriba/6.png";
-import ResourcePlayerArriba7 from "../resources/player/arriba/7.png";
-import ResourcePlayerArriba8 from "../resources/player/arriba/8.png";
-import ResourcePlayerArriba9 from "../resources/player/arriba/9.png";
-import ResourcePlayerArriba10 from "../resources/player/arriba/10.png";
-import ResourcePlayerArribaGolpe from "../resources/player/arriba/golpe.png";
-import ResourcePlayerArribaNadando0 from "../resources/player/arriba/nadando/0.png";
-import ResourcePlayerArribaNadando1 from "../resources/player/arriba/nadando/1.png";
-import ResourcePlayerArribaNadando2 from "../resources/player/arriba/nadando/2.png";
-import ResourcePlayerArribaNadando3 from "../resources/player/arriba/nadando/3.png";
-import ResourcePlayerArribaNadando4 from "../resources/player/arriba/nadando/4.png";
-import ResourcePlayerArribaNadando5 from "../resources/player/arriba/nadando/5.png";
-import ResourcePlayerArribaNadando6 from "../resources/player/arriba/nadando/6.png";
+import ResourcePlayerArriba0 from "resources/player/arriba/0.png";
+import ResourcePlayerArriba1 from "resources/player/arriba/1.png";
+import ResourcePlayerArriba2 from "resources/player/arriba/2.png";
+import ResourcePlayerArriba3 from "resources/player/arriba/3.png";
+import ResourcePlayerArriba4 from "resources/player/arriba/4.png";
+import ResourcePlayerArriba5 from "resources/player/arriba/5.png";
+import ResourcePlayerArriba6 from "resources/player/arriba/6.png";
+import ResourcePlayerArriba7 from "resources/player/arriba/7.png";
+import ResourcePlayerArriba8 from "resources/player/arriba/8.png";
+import ResourcePlayerArriba9 from "resources/player/arriba/9.png";
+import ResourcePlayerArriba10 from "resources/player/arriba/10.png";
+import ResourcePlayerArribaGolpe from "resources/player/arriba/golpe.png";
+import ResourcePlayerArribaNadando0 from "resources/player/arriba/nadando/0.png";
+import ResourcePlayerArribaNadando1 from "resources/player/arriba/nadando/1.png";
+import ResourcePlayerArribaNadando2 from "resources/player/arriba/nadando/2.png";
+import ResourcePlayerArribaNadando3 from "resources/player/arriba/nadando/3.png";
+import ResourcePlayerArribaNadando4 from "resources/player/arriba/nadando/4.png";
+import ResourcePlayerArribaNadando5 from "resources/player/arriba/nadando/5.png";
+import ResourcePlayerArribaNadando6 from "resources/player/arriba/nadando/6.png";
 
-import ResourcePiedra1 from "../resources/piedra/1.png";
-import ResourcePiedra2 from "../resources/piedra/2.png";
+import ResourcePiedra1 from "resources/piedra/1.png";
+import ResourcePiedra2 from "resources/piedra/2.png";
 
 const sketch = p => {
   p.preload = () => {
@@ -203,8 +204,8 @@ const sketch = p => {
     State.initialMapX = p.floor((Parametros.mapaRows - Parametros.canvasRows) / 2);
     State.initialMapY = p.floor((Parametros.mapaCols - Parametros.canvasCols) / 2);
 
-    //Inventario
-    // State.inventario = new Inventario();
+    //Menu
+    State.menu = new Menu();
 
     //HUD
     State.hud = new HUD();
@@ -232,6 +233,11 @@ const sketch = p => {
   p.keyPressed = () => {
     const key = p.key;
 
+    if (State.menu.visible == true) {
+      State.menu.keyPressed(key);
+      return;
+    }
+
     if (key == "1") {
       const player = State.player;
       player.setArma(player.armaPico);
@@ -250,10 +256,12 @@ const sketch = p => {
       return;
     }
 
-    // if (key == "i") {
-    //   State.inventario.abierto = !State.inventario.abierto;
-    //   return;
-    // }
+    if (key == "i") {
+      State.menu.botonActivo = undefined;
+      State.menu.submenu = undefined;
+      State.menu.visible = true;
+      return;
+    }
 
     if (key == " ") {
       Rules_Player.golpear();
@@ -319,8 +327,10 @@ const sketch = p => {
       return;
     }
 
-    // if (inventario.abierto == false) {
-    // p.fill(0);
+    if (State.menu.visible == true) {
+      State.menu.draw();
+      return;
+    }
 
     //Terreno
     for (let i = 0; i < canvasRows; i++) {
@@ -360,29 +370,11 @@ const sketch = p => {
       }
     }
 
-    // //Monstruos
-    // for (let i = 0; i < canvasRows; i++) {
-    //   for (let j = 0; j < canvasCols; j++) {
-    //     let mi = i + State.initialMapX + State.offsetX;
-    //     let mj = j + State.initialMapY + State.offsetY;
-
-    //     State.monstruos.forEach(monstruo => {
-    //       if (monstruo.muerto == true) return;
-    //       if (monstruo.i != mi || monstruo.j != mj) return;
-    //       monstruo.show(i * canvasItemWidth, j * canvasItemWidth);
-    //     });
-    //   }
-    // }
-
     //HUD
     hud.show();
-    // }
 
-    //Player
+    //player
     player.show();
-
-    //Inventario
-    // inventario.show();
   };
 };
 

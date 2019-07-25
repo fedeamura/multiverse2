@@ -1,38 +1,39 @@
-import { getSketch } from "../_sketch";
-import State from "../_state";
-import Parametros from "../_parametros";
+import { getSketch } from "_sketch";
+import State from "_state";
+import Parametros from "_parametros";
 
 //Biomas
-import BiomaBase from "../Bioma/base";
-import BiomaOceano from "../Bioma/oceano";
-import BiomaMontaña from "../Bioma/montaña";
-import BiomaPlaya from "../Bioma/playa";
-import BiomaBosque from "../Bioma/bosque";
-import BiomaDesierto from "../Bioma/desierto";
-import BiomaJardin from "../Bioma/jardin";
-import BiomaLlanura from "../Bioma/llanura";
+import BiomaBase from "juego/bioma/base";
+import BiomaOceano from "juego/bioma/oceano";
+import BiomaMontaña from "juego/bioma/montaña";
+import BiomaPlaya from "juego/bioma/playa";
+import BiomaBosque from "juego/bioma/bosque";
+import BiomaDesierto from "juego/bioma/desierto";
+import BiomaJardin from "juego/bioma/jardin";
+import BiomaLlanura from "juego/bioma/llanura";
 
 //Pisos
-import PisoBase from "../Piso/base";
-import PisoAgua from "../Piso/agua";
-import PisoMontaña from "../Piso/montaña";
-import PisoArena from "../Piso/arena";
-import PisoBosque from "../Piso/bosque";
-import PisoLlanura from "../Piso/llanura";
-import PisoJardin from "../Piso/jardin";
+import PisoBase from "juego/piso/base";
+import PisoAgua from "juego/piso/agua";
+import PisoMontaña from "juego/piso/montaña";
+import PisoArena from "juego/piso/arena";
+import PisoBosque from "juego/piso/bosque";
+import PisoLlanura from "juego/piso/llanura";
+import PisoJardin from "juego/piso/jardin";
 
 //Items
-import Arbol from "../Arbol";
-import Arbusto from "../Arbusto";
-import FlorBosque from "../Flor/bosque";
-import FlorLlanura from "../Flor/llanura";
-import FlorJardin from "../Flor/jardin";
-import Nieve from "../Nieve";
-import Nave from "../Nave";
-import Piedra from "../Piedra";
-import Oro from "../Oro";
+import Arbol from "juego/arbol";
+import Arbusto from "juego/arbusto";
+import FlorBosque from "juego/flor/bosque";
+import FlorLlanura from "juego/flor/llanura";
+import FlorJardin from "juego/flor/jardin";
+import Nieve from "juego/nieve";
+import Nave from "juego/nave";
+import Piedra from "juego/piedra";
+import Oro from "juego/oro";
+import Palo from "juego/palo";
 
-//Rules
+//rules
 import Rules_Player from "./Rules_Player";
 
 const metodos = {
@@ -155,6 +156,10 @@ const metodos = {
                 } else {
                   if (getSketch().random() <= bioma.probabilidadFlor) {
                     items.push(new FlorBosque());
+                  } else {
+                    if (getSketch().random() <= bioma.probabilidadPalo) {
+                      items.push(new Palo());
+                    }
                   }
                 }
               }
@@ -173,6 +178,10 @@ const metodos = {
                 } else {
                   if (getSketch().random() <= bioma.probabilidadFlor) {
                     items.push(new FlorLlanura());
+                  } else {
+                    if (getSketch().random() <= bioma.probabilidadPalo) {
+                      items.push(new Palo());
+                    }
                   }
                 }
               }

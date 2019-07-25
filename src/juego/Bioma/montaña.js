@@ -1,4 +1,4 @@
-import Bioma from "./index";
+import Bioma from "juego/bioma/index";
 import { isFunction } from "util";
 
 export default class Montaña extends Bioma {

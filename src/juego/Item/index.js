@@ -6,4 +6,14 @@ export default class Item {
     this.vida = vida;
     this.vidaMaxima = vidaMaxima;
   }
+
+  golpear(poder) {
+    console.log("golpe");
+    if (this.rompible == false) return false;
+
+    this.vida -= poder;
+    if (this.vida < 0) this.vida = 0;
+
+    return this.vida == 0;
+  }
 }

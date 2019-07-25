@@ -1,21 +1,22 @@
-import { getSketch } from "../_sketch";
-import State from "../_state";
-import Parametros from "../_parametros";
+import { getSketch } from "_sketch";
+import State from "_state";
+import Parametros from "_parametros";
 
 //Pisos
-import PisoAgua from "../Piso/agua";
-import Flor from "../Flor";
-import Arbol from "../Arbol";
-import Nieve from "../Nieve";
+import PisoAgua from "../juego/piso/agua";
+import Flor from "../juego/flor";
+import Arbol from "../juego/arbol";
+import Nieve from "../juego/nieve";
+import Palo from "../juego/palo";
 
-import { Hacha, Pico, Pala } from "../Player";
-import Arbusto from "../Arbusto";
-import Piedra from "../Piedra";
-import Oro from "../Oro";
+import { Hacha, Pico, Pala } from "../juego/player";
+import Arbusto from "../juego/arbusto";
+import Piedra from "../juego/piedra";
+import Oro from "../juego/oro";
 
-//Rules
-import Rules_Mapa from "../Rules/Rules_Mapa";
-import Rules_Juego from "../Rules/Rules_Juego";
+//rules
+import Rules_Mapa from "../rules/Rules_Mapa";
+import Rules_Juego from "../rules/Rules_Juego";
 
 const metodos = {
   calcularPosicion: () => {
@@ -175,17 +176,6 @@ const metodos = {
     const arma = player.arma;
     const element = item.items[item.items.length - 1];
 
-    try {
-      let resultado = element.golpear();
-      if (resultado == false) return;
-    } catch (ex) {}
-
-    //Verifico que sea rompible
-    if (element.rompible == false) {
-      console.log("El objeto no se puede romper", element);
-      return;
-    }
-
     let poder = 0.5;
 
     //Leñador
@@ -194,7 +184,10 @@ const metodos = {
     }
 
     //Jardinero
-    if (arma instanceof Pala && (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve)) {
+    if (
+      arma instanceof Pala &&
+      (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve || element instanceof Palo)
+    ) {
       poder = 1 + 0.5 * player.nivelJardinero;
     }
 
@@ -207,46 +200,14 @@ const metodos = {
     console.log("Porder de golpe", poder);
     player.setPoderGolpe(poder);
 
-    element.vida -= poder;
-    if (element.vida < 0) element.vida = 0;
-    if (element.vida == 0) {
-      item.items = item.items.slice(0, item.items.length - 1);
+    //Hago el golpe
+    Rules_Juego.onItemGolpeado(item, element, poder);
+    let resultado = element.golpear(poder);
+    if (resultado != true) return;
 
-      if (element instanceof Arbol) {
-        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} madera`);
-        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} madera`);
-        player.subirPuntoLeñador();
-        return;
-      }
-
-      if (element instanceof Flor) {
-        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} flores`);
-        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} flor`);
-        player.subirPuntoJardinero();
-        return;
-      }
-
-      if (element instanceof Arbusto) {
-        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} bayas`);
-        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} baya`);
-        player.subirPuntoJardinero();
-        return;
-      }
-
-      if (element instanceof Piedra) {
-        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} piedras`);
-        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} piedra`);
-        player.subirPuntoMinero();
-        return;
-      }
-
-      if (element instanceof Oro) {
-        if (element.recompensa != 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} oro`);
-        if (element.recompensa == 1) Rules_Juego.nuevoMensaje(`+${element.recompensa} oro`);
-        player.subirPuntoMinero();
-        return;
-      }
-    }
+    //Destruyo el item
+    item.items = item.items.slice(0, item.items.length - 1);
+    Rules_Juego.onItemDestruido(item, element);
   }
 };
 

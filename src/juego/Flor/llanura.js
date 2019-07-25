@@ -1,7 +1,7 @@
-import { getSketch } from "../_sketch";
-import Recursos from "../_recursos";
+import { getSketch } from "_sketch";
+import Recursos from "_recursos";
 
-import Flor from "./index";
+import Flor from "juego/flor/index";
 
 export default class FlorLlanura extends Flor {
   constructor() {
@@ -11,13 +11,7 @@ export default class FlorLlanura extends Flor {
 
   draw(i, j, canvasItemWidth) {
     let img = this.getImagen();
-    getSketch().image(
-      img,
-      i * canvasItemWidth,
-      j * canvasItemWidth,
-      canvasItemWidth,
-      canvasItemWidth
-    );
+    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }
 
   getImagen() {

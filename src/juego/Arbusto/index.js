@@ -1,7 +1,7 @@
-import { getSketch } from "../_sketch";
-import Recursos from "../_recursos";
+import { getSketch } from "_sketch";
+import Recursos from "_recursos";
 
-import Item from "../Item";
+import Item from "juego/item";
 
 export default class Arbusto extends Item {
   constructor() {

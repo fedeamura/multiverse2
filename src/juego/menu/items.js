@@ -1,50 +1,32 @@
 import { getSketch } from "_sketch";
-import Parametros from "_parametros";
 import State from "_state";
-import Colores from "_colores";
-import Recursos from "_recursos";
-
-const ITEM_MADERA = "madera";
-const ITEM_PALO = "palo";
-
-const ITEM_MANZANA = "manzana";
-const ITEM_BAYA_ROJA = "baya_roja";
-const ITEM_BAYA_AZUL = "baya_azul";
-const ITEM_BAYA_VIOLETA = "baya_violeta";
-
-const ITEM_PIEDRA = "piedra";
-const ITEM_ORO = "oro";
-const ITEM_DIAMANTE = "diamante";
-
-const ITEM_FLOR_AZUL = "flor_azul";
-const ITEM_FLOR_ROJA = "flor_roja";
-const ITEM_FLOR_VIOLETA = "flor_violeta";
-const ITEM_FLOR_BLANCA = "flor_blanca";
-const ITEM_FLOR_AMARILLA = "flor_amarilla";
+import Constantes from "_constantes";
+import Item from "./item";
 
 const BOTONES = [
   //Madera
   [{ titulo: "Construccion" }, {}, {}],
   [
     //Madera
-    { texto: "Madera", value: ITEM_MADERA },
+    { texto: "Madera", value: Constantes.ITEM_MADERA, tipo: Constantes.TIPO_ITEM_CONSTRUCCCION },
     //Palo
-    { texto: "Palo", value: ITEM_PALO },
-    {}
+    { texto: "Palo", value: Constantes.ITEM_PALO, tipo: Constantes.TIPO_ITEM_CONSTRUCCCION },
+    //Tabla
+    { texto: "Tabla", value: Constantes.ITEM_TABLA, tipo: Constantes.TIPO_ITEM_CONSTRUCCCION }
   ],
   //Comida
   [{ titulo: "Comida" }, {}, {}],
   [
     //Manzana
-    { texto: "Manzana", value: ITEM_MANZANA },
+    { texto: "Manzana", value: Constantes.ITEM_MANZANA, tipo: Constantes.ITEM_TIPO_COMIDA },
     //Baya roja
-    { texto: "Baya roja", value: ITEM_BAYA_ROJA },
+    { texto: "Baya roja", value: Constantes.ITEM_BAYA_ROJA, tipo: Constantes.ITEM_TIPO_COMIDA },
     //Baya azul
-    { texto: "Baya azul", value: ITEM_BAYA_AZUL }
+    { texto: "Baya azul", value: Constantes.ITEM_BAYA_AZUL, tipo: Constantes.ITEM_TIPO_COMIDA }
   ],
   [
     //Baya violeta
-    { texto: "Baya violeta", value: ITEM_BAYA_VIOLETA },
+    { texto: "Baya violeta", value: Constantes.ITEM_BAYA_VIOLETA, tipo: Constantes.ITEM_TIPO_COMIDA },
     {},
     {}
   ],
@@ -52,28 +34,34 @@ const BOTONES = [
   [{ titulo: "Mineria" }, {}, {}],
   [
     //Piedra
-    { texto: "Piedra", value: ITEM_PIEDRA },
+    { texto: "Piedra", value: Constantes.ITEM_PIEDRA, tipo: Constantes.ITEM_TIPO_MINERIA },
     //Oro
-    { texto: "Oro", value: ITEM_ORO },
+    { texto: "Oro", value: Constantes.ITEM_ORO, tipo: Constantes.ITEM_TIPO_MINERIA },
     //Diamante
-    { texto: "Diamante", value: ITEM_DIAMANTE }
+    { texto: "Diamante", value: Constantes.ITEM_DIAMANTE, tipo: Constantes.ITEM_TIPO_MINERIA }
   ],
   //Varios
   [{ titulo: "Varios" }, {}, {}],
   [
     //Flor azul
-    { texto: "Flor azul", value: ITEM_FLOR_AZUL },
+    { texto: "Flor azul", value: Constantes.ITEM_FLOR_AZUL, tipo: Constantes.ITEM_TIPO_VARIOS },
     //Flor roja
-    { texto: "Flor roja", value: ITEM_FLOR_ROJA },
+    { texto: "Flor roja", value: Constantes.ITEM_FLOR_ROJA, tipo: Constantes.ITEM_TIPO_VARIOS },
     //Flor violeta
-    { texto: "Flor violeta", value: ITEM_FLOR_VIOLETA }
+    { texto: "Flor violeta", value: Constantes.ITEM_FLOR_VIOLETA, tipo: Constantes.ITEM_TIPO_VARIOS }
   ],
   [
     //Flor blanca
-    { texto: "Flor blanca", value: ITEM_FLOR_BLANCA },
+    { texto: "Flor blanca", value: Constantes.ITEM_FLOR_BLANCA, tipo: Constantes.ITEM_TIPO_VARIOS },
     //Flor amarilla
-    { texto: "Flor amarilla", value: ITEM_FLOR_AMARILLA },
-    //
+    { texto: "Flor amarilla", value: Constantes.ITEM_FLOR_AMARILLA, tipo: Constantes.ITEM_TIPO_VARIOS },
+    //Nieve
+    { texto: "Semilla de arbol", value: Constantes.ITEM_SEMILLA_ARBOL, tipo: Constantes.ITEM_TIPO_VARIOS }
+  ],
+  [
+    //Nieve
+    { texto: "Nieve", value: Constantes.ITEM_NIEVE, tipo: Constantes.ITEM_TIPO_VARIOS },
+    {},
     {}
   ]
 ];
@@ -83,93 +71,115 @@ export default class Menu {
     this.visible = true;
 
     this.botonActivo = undefined;
+    this.itemSeleccionado = undefined;
 
+    this.cargarCantidades();
+  }
+
+  cargarCantidades() {
     for (let j = 0; j < BOTONES.length; j++) {
       for (let i = 0; i < BOTONES[0].length; i++) {
         let b = BOTONES[j][i];
 
         if (b && b.value) {
           switch (b.value) {
-            case ITEM_MADERA:
+            case Constantes.ITEM_MADERA:
               {
                 b.cantidad = State.items.madera;
               }
               break;
 
-            case ITEM_PALO:
+            case Constantes.ITEM_PALO:
               {
                 b.cantidad = State.items.palo;
               }
               break;
 
-            case ITEM_MANZANA:
+            case Constantes.ITEM_TABLA:
+              {
+                b.cantidad = State.items.tabla;
+              }
+              break;
+            case Constantes.ITEM_MANZANA:
               {
                 b.cantidad = State.items.manzana;
               }
               break;
 
-            case ITEM_BAYA_ROJA:
+            case Constantes.ITEM_BAYA_ROJA:
               {
                 b.cantidad = State.items.bayaRoja;
               }
               break;
 
-            case ITEM_BAYA_AZUL:
+            case Constantes.ITEM_BAYA_AZUL:
               {
                 b.cantidad = State.items.bayaAzul;
               }
               break;
 
-            case ITEM_BAYA_VIOLETA:
+            case Constantes.ITEM_BAYA_VIOLETA:
               {
                 b.cantidad = State.items.bayaVioleta;
               }
               break;
 
-            case ITEM_PIEDRA:
+            case Constantes.ITEM_PIEDRA:
               {
                 b.cantidad = State.items.piedra;
               }
               break;
 
-            case ITEM_ORO:
+            case Constantes.ITEM_ORO:
               {
                 b.cantidad = State.items.oro;
               }
               break;
 
-            case ITEM_DIAMANTE:
+            case Constantes.ITEM_DIAMANTE:
               {
                 b.cantidad = State.items.diamante;
               }
               break;
 
-            case ITEM_FLOR_AZUL:
+            case Constantes.ITEM_FLOR_AZUL:
               {
                 b.cantidad = State.items.florAzul;
               }
               break;
 
-            case ITEM_FLOR_ROJA:
+            case Constantes.ITEM_FLOR_ROJA:
               {
                 b.cantidad = State.items.florRoja;
               }
               break;
 
-            case ITEM_FLOR_VIOLETA:
+            case Constantes.ITEM_FLOR_VIOLETA:
               {
                 b.cantidad = State.items.florVioleta;
               }
               break;
-            case ITEM_FLOR_AMARILLA:
+            case Constantes.ITEM_FLOR_AMARILLA:
               {
                 b.cantidad = State.items.florAmarilla;
               }
               break;
 
-            case ITEM_FLOR_BLANCA:
+            case Constantes.ITEM_FLOR_BLANCA:
               {
                 b.cantidad = State.items.florBlanca;
+              }
+              break;
+
+            case Constantes.ITEM_SEMILLA_ARBOL:
+              {
+                b.cantidad = State.items.semillaArbol;
+              }
+              break;
+
+            case Constantes.ITEM_NIEVE:
+              {
+                b.cantidad = State.items.nieve;
               }
               break;
           }
@@ -180,7 +190,18 @@ export default class Menu {
 
   keyPressed(key) {
     if (key == "Escape") {
+      if (this.itemSeleccionado) {
+        this.cargarCantidades();
+        this.itemSeleccionado = undefined;
+        return;
+      }
+
       State.menu.submenu = undefined;
+      return;
+    }
+
+    if (this.itemSeleccionado) {
+      this.itemSeleccionado.keyPressed(key);
       return;
     }
 
@@ -345,9 +366,15 @@ export default class Menu {
 
   seleccionar() {
     if (this.botonActivo == undefined) return;
+    this.itemSeleccionado = new Item(this.botonActivo);
   }
 
   draw() {
+    if (this.itemSeleccionado) {
+      this.itemSeleccionado.draw();
+      return;
+    }
+
     getSketch().fill(230);
     getSketch().noStroke();
     getSketch().rect(0, 0, getSketch().width, getSketch().height);
@@ -369,38 +396,21 @@ export default class Menu {
             getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
             getSketch().textSize(buttonTextSize);
             getSketch().noStroke();
-            getSketch().text(
-              b.titulo,
-              buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding,
-              buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding
-            );
+            getSketch().text(b.titulo, buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding, buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding);
           }
 
           if (b.value) {
             getSketch().fill(255);
             getSketch().strokeWeight(this.botonActivo != undefined && this.botonActivo.value == b.value ? 2 : 0);
             getSketch().stroke(0);
-            getSketch().rect(
-              buttonPadding + i * buttonW + i * buttonSpacing,
-              buttonPadding + j * buttonH + j * buttonSpacing,
-              buttonW,
-              buttonH
-            );
+            getSketch().rect(buttonPadding + i * buttonW + i * buttonSpacing, buttonPadding + j * buttonH + j * buttonSpacing, buttonW, buttonH);
             getSketch().fill(0);
             getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
             getSketch().textSize(buttonTextSize);
             getSketch().noStroke();
-            getSketch().text(
-              b.texto,
-              buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding,
-              buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding
-            );
+            getSketch().text(b.texto, buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding, buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding);
 
-            getSketch().text(
-              b.cantidad || 0,
-              buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding + buttonW - 30,
-              buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding
-            );
+            getSketch().text(b.cantidad || 0, buttonPadding + i * buttonW + i * buttonSpacing + buttonTextPadding + buttonW - 30, buttonPadding + j * buttonH + j * buttonSpacing + buttonTextPadding);
           }
         }
       }

@@ -11,17 +11,19 @@ const ITEM_ITEMS = "items";
 const ITEM_HABILIDADES = "habilidades";
 const ITEM_MAPA = "mapa";
 const ITEM_PERSONAJE = "personaje";
+const ITEM_FABRICAR = "fabricar";
 
 const BOTONES = [
   [{ texto: "Items", value: ITEM_ITEMS }, { texto: "Habilidades", value: ITEM_HABILIDADES }],
-  [{ texto: "Mapa", value: ITEM_MAPA }, { texto: "Personaje", value: ITEM_PERSONAJE }]
+  [{ texto: "Mapa", value: ITEM_MAPA }, { texto: "Personaje", value: ITEM_PERSONAJE }],
+  [{ texto: "Fabricar", value: ITEM_FABRICAR }, {}]
 ];
 
 export default class Menu {
   constructor() {
-    this.visible = true;
+    this.visible = false;
     this.botonActivo = undefined;
-    this.submenu = new MenuMapa();
+    this.submenu = undefined;
   }
 
   keyPressed(key) {
@@ -48,36 +50,142 @@ export default class Menu {
     }
 
     if (key == "ArrowLeft") {
-      let pos = this.buscarIndice();
-      pos.i--;
-      pos = this.corregirPosicion(pos);
+      const pos = this.moverIzquierda();
       this.botonActivo = BOTONES[pos.j][pos.i];
       return;
     }
 
     if (key == "ArrowRight") {
-      let pos = this.buscarIndice();
-      pos.i++;
-      pos = this.corregirPosicion(pos);
+      const pos = this.moverDerecha();
       this.botonActivo = BOTONES[pos.j][pos.i];
       return;
     }
 
     if (key == "ArrowDown") {
-      let pos = this.buscarIndice();
-      pos.j++;
-      pos = this.corregirPosicion(pos);
+      const pos = this.moverAbajo();
       this.botonActivo = BOTONES[pos.j][pos.i];
       return;
     }
 
     if (key == "ArrowUp") {
-      let pos = this.buscarIndice();
-      pos.j--;
-      pos = this.corregirPosicion(pos);
+      const pos = this.moverArriba();
       this.botonActivo = BOTONES[pos.j][pos.i];
       return;
     }
+  }
+
+  moverDerecha() {
+    let pos = this.buscarIndice();
+    pos.i++;
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    try {
+      let b = BOTONES[pos.j][pos.i];
+      if (b == undefined || b.value == undefined) {
+        pos.i--;
+      }
+    } catch (ex) {
+      pos.i--;
+    }
+
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    return pos;
+  }
+
+  moverIzquierda() {
+    let pos = this.buscarIndice();
+    pos.i--;
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    try {
+      let b = BOTONES[pos.j][pos.i];
+      if (b == undefined || b.value == undefined) {
+        pos.i++;
+      }
+    } catch (ex) {
+      pos.i++;
+    }
+
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    return pos;
+  }
+
+  moverAbajo() {
+    let posOriginal = this.buscarIndice();
+    let pos = this.buscarIndice();
+    pos.j++;
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    try {
+      let b = BOTONES[pos.j][pos.i];
+      if (b == undefined) {
+        pos = posOriginal;
+      } else {
+        let esTitulo = BOTONES[pos.j][0].titulo != undefined;
+        if (esTitulo) {
+          pos.j++;
+        } else {
+          if (b.value == undefined) {
+            pos = posOriginal;
+          }
+        }
+
+        b = BOTONES[pos.j][pos.i];
+        if (b == undefined || (b.value == undefined && b.titulo == undefined)) {
+          pos = posOriginal;
+        }
+      }
+    } catch (ex) {
+      pos = posOriginal;
+    }
+
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    return pos;
+  }
+
+  moverArriba() {
+    let posOriginal = this.buscarIndice();
+    let pos = this.buscarIndice();
+    pos.j--;
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    try {
+      let b = BOTONES[pos.j][pos.i];
+      if (b == undefined) {
+        pos.j++;
+      } else {
+        let esTitulo = BOTONES[pos.j][0].titulo != undefined;
+        if (esTitulo && pos.j != 0) {
+          pos.j--;
+        } else {
+          if (b.value == undefined) {
+            pos = posOriginal;
+          }
+        }
+        b = BOTONES[pos.j][pos.i];
+        if (b == undefined || (b.value == undefined && b.titulo == undefined)) {
+          pos = posOriginal;
+        }
+      }
+    } catch (ex) {
+      console.log(ex);
+      pos = posOriginal;
+    }
+
+    if (pos.i < 0) pos.i = 0;
+    if (pos.j < 0) pos.j = 0;
+
+    return pos;
   }
 
   buscarIndice() {
@@ -93,16 +201,6 @@ export default class Menu {
     }
 
     return { i: -1, j: -1 };
-  }
-
-  corregirPosicion(pos) {
-    if (pos.i < 0) pos.i = 0;
-    if (pos.j < 0) pos.j = 0;
-
-    if (pos.i > BOTONES.length - 1) pos.i = BOTONES.length - 1;
-    if (pos.j > BOTONES[0].length - 1) pos.j = BOTONES[0].length - 1;
-
-    return pos;
   }
 
   seleccionar() {
@@ -143,24 +241,17 @@ export default class Menu {
       for (let i = 0; i < BOTONES[0].length; i++) {
         let b = BOTONES[j][i];
 
-        getSketch().fill(255);
-        getSketch().strokeWeight(this.botonActivo != undefined && this.botonActivo.value == b.value ? 2 : 0);
-        getSketch().stroke(0);
-        getSketch().rect(
-          buttonSpacing + i * buttonW + i * buttonSpacing,
-          buttonSpacing + j * buttonH + j * buttonSpacing,
-          buttonW,
-          buttonH
-        );
-        getSketch().fill(0);
-        getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
-        getSketch().textSize(buttonTextSize);
-        getSketch().noStroke();
-        getSketch().text(
-          b.texto,
-          buttonSpacing + i * buttonW + i * buttonSpacing + 10,
-          buttonSpacing + j * buttonH + j * buttonSpacing + 10
-        );
+        if (b.texto) {
+          getSketch().fill(255);
+          getSketch().strokeWeight(this.botonActivo != undefined && this.botonActivo.value == b.value ? 2 : 0);
+          getSketch().stroke(0);
+          getSketch().rect(buttonSpacing + i * buttonW + i * buttonSpacing, buttonSpacing + j * buttonH + j * buttonSpacing, buttonW, buttonH);
+          getSketch().fill(0);
+          getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
+          getSketch().textSize(buttonTextSize);
+          getSketch().noStroke();
+          getSketch().text(b.texto, buttonSpacing + i * buttonW + i * buttonSpacing + 10, buttonSpacing + j * buttonH + j * buttonSpacing + 10);
+        }
       }
     }
     // //Items

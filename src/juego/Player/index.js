@@ -4,9 +4,6 @@ import Recursos from "_recursos";
 import State from "_state";
 
 import PisoAgua from "juego/piso/agua";
-import Arbol from "juego/arbol";
-import Flor from "juego/flor";
-import Arbusto from "juego/arbusto";
 
 //rules
 import Rules_Player from "rules/Rules_Player";
@@ -26,6 +23,9 @@ export default class Player {
     this.arma = this.armaPico;
     this.poderGolpe = undefined;
 
+    this.itemEquipado = undefined;
+    this.itemEquipadoSeleccionado = false;
+
     this.puntosLeñador = 0;
     this.puntosJardinero = 0;
     this.puntosMinero = 0;
@@ -40,10 +40,7 @@ export default class Player {
 
     this.vel = 1;
 
-    this.playerPos = getSketch().createVector(
-      getSketch().floor(Parametros.canvasRows / 2) * Parametros.canvasItemWidth,
-      getSketch().floor(Parametros.canvasCols / 2) * Parametros.canvasItemHeight
-    );
+    this.playerPos = getSketch().createVector(getSketch().floor(Parametros.canvasRows / 2) * Parametros.canvasItemWidth, getSketch().floor(Parametros.canvasCols / 2) * Parametros.canvasItemHeight);
     this.pos = pos;
 
     this.dir = "d";
@@ -251,7 +248,12 @@ export default class Player {
   }
 
   setArma(arma) {
+    this.itemEquipadoSeleccionado = false;
     this.arma = arma;
+  }
+
+  setItemEquipadoSeleccionado() {
+    this.itemEquipadoSeleccionado = true;
   }
 
   setPoderGolpe(poder) {

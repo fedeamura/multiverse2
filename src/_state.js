@@ -13,9 +13,12 @@ const State = {
   monstruos: [],
   monstruosVisibles: [],
   mensaje: undefined,
+  semillasArbol: [],
+  hora: 0,
   items: {
     madera: 0,
     palo: 0,
+    tabla: 200,
     manzana: 0,
     bayaRoja: 0,
     bayaAzul: 0,
@@ -27,7 +30,9 @@ const State = {
     florRoja: 0,
     florVioleta: 0,
     florBlanca: 0,
-    florAmarilla: 0
+    florAmarilla: 0,
+    semillaArbol: 100,
+    nieve: 0
   }
 };
 

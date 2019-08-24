@@ -90,6 +90,7 @@ import ResourcePiedra2 from "resources/piedra/2.png";
 
 const sketch = p => {
   p.preload = () => {
+    p.disableFriendlyErrors = true;
     setSketch(p);
 
     Recursos.imagenes.arbol1 = p.loadImage("https://i.imgur.com/I3dMA6A.png");
@@ -201,6 +202,10 @@ const sketch = p => {
     Colores.colorHambre = p.color(229, 57, 53);
     Colores.colorOxigeno = p.color(3, 155, 229);
 
+    Colores.tabla = p.color("#795548");
+    Colores.pisoHundido = p.color("#4e342e");
+    Colores.semillaArbol = p.color("#8bc34a");
+
     State.initialMapX = p.floor((Parametros.mapaRows - Parametros.canvasRows) / 2);
     State.initialMapY = p.floor((Parametros.mapaCols - Parametros.canvasCols) / 2);
 
@@ -235,6 +240,12 @@ const sketch = p => {
 
     if (State.menu.visible == true) {
       State.menu.keyPressed(key);
+      return;
+    }
+
+    if (key == "e") {
+      const player = State.player;
+      player.setItemEquipadoSeleccionado();
       return;
     }
 
@@ -327,8 +338,26 @@ const sketch = p => {
       return;
     }
 
+    //Si esta el menu, solo dibujo el menu, y los mensajes
     if (State.menu.visible == true) {
       State.menu.draw();
+
+      //Mensaje
+      if (State.mensaje) {
+        const padding = 8;
+
+        const mensaje_w = 200;
+        const mensaje_h = 20;
+        const mensaje_x = canvasItemWidth * canvasRows - mensaje_w - padding;
+        const mensaje_y = padding;
+        getSketch().fill(255);
+        getSketch().rect(mensaje_x, mensaje_y, mensaje_w, mensaje_h, 8);
+        getSketch().fill(0);
+        getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
+        getSketch().textSize(12);
+        getSketch().noStroke();
+        getSketch().text(State.mensaje, mensaje_x + 4, mensaje_y + 4);
+      }
       return;
     }
 
@@ -370,11 +399,33 @@ const sketch = p => {
       }
     }
 
+    //player
+    player.show();
+
+    //Luz
+    let luz = getSketch().map(State.hora, 0, 86400, 0, 200);
+    p.fill(0, luz);
+    p.rect(0, 0, canvasRows * canvasItemWidth, canvasRows * canvasItemWidth);
+
     //HUD
     hud.show();
 
-    //player
-    player.show();
+    //Mensaje
+    if (State.mensaje) {
+      const padding = 8;
+
+      const mensaje_w = 200;
+      const mensaje_h = 20;
+      const mensaje_x = canvasItemWidth * canvasRows - mensaje_w - padding;
+      const mensaje_y = padding;
+      getSketch().fill(255);
+      getSketch().rect(mensaje_x, mensaje_y, mensaje_w, mensaje_h, 8);
+      getSketch().fill(0);
+      getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
+      getSketch().textSize(12);
+      getSketch().noStroke();
+      getSketch().text(State.mensaje, mensaje_x + 4, mensaje_y + 4);
+    }
   };
 };
 

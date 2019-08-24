@@ -31,6 +31,7 @@ import Nieve from "juego/nieve";
 import Nave from "juego/nave";
 import Piedra from "juego/piedra";
 import Oro from "juego/oro";
+import Diamante from "juego/diamante";
 import Palo from "juego/palo";
 
 //rules
@@ -116,10 +117,12 @@ const metodos = {
 
             bioma = metodos.calcularBioma(a, h);
 
+            //Oceano
             if (bioma instanceof BiomaOceano) {
               piso = new PisoAgua(pos, bioma.profundidad);
             }
 
+            //Montaña
             if (bioma instanceof BiomaMontaña) {
               piso = new PisoMontaña(pos, bioma.altura);
 
@@ -134,16 +137,22 @@ const metodos = {
               } else {
                 if (getSketch().random() <= bioma.probabilidadOro) {
                   items.push(new Oro());
+                } else {
+                  if (getSketch().random() <= bioma.probabilidadDiamante) {
+                    items.push(new Diamante());
+                  }
                 }
               }
 
               piso.items = items;
             }
 
+            //Playa
             if (bioma instanceof BiomaPlaya) {
               piso = new PisoArena(pos);
             }
 
+            //Bosque
             if (bioma instanceof BiomaBosque) {
               piso = new PisoBosque(pos);
 
@@ -166,6 +175,7 @@ const metodos = {
               piso.items = items;
             }
 
+            //Lanura
             if (bioma instanceof BiomaLlanura) {
               piso = new PisoLlanura(pos);
 
@@ -188,6 +198,7 @@ const metodos = {
               piso.items = items;
             }
 
+            //Jardin
             if (bioma instanceof BiomaJardin) {
               piso = new PisoJardin(pos);
 
@@ -206,6 +217,7 @@ const metodos = {
               piso.items = items;
             }
 
+            //Desierto
             if (bioma instanceof BiomaDesierto) {
               piso = new PisoArena(pos);
             }

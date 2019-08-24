@@ -15,8 +15,8 @@ export default class FlorLlanura extends Flor {
   }
 
   getImagen() {
-    if (this.color == "blanca") return Recursos.imagenes.florBlanca;
-    if (this.color == "amarilla") return Recursos.imagenes.florAmarilla;
+    if (this.color === "blanca") return Recursos.imagenes.florBlanca;
+    if (this.color === "amarilla") return Recursos.imagenes.florAmarilla;
     return Recursos.imagenes.florBlanca;
   }
 }

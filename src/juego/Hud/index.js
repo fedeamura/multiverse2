@@ -37,7 +37,7 @@ export default class HUD {
     const barra_padding = 4;
 
     //player salud
-    getSketch().stroke(0, 100);
+    getSketch().noStroke();
     getSketch().fill(0, 100);
     getSketch().rect(barra_x, barra_y, barra_w, barra_h, borderRadius);
 
@@ -49,7 +49,7 @@ export default class HUD {
 
     //player hambre
     const playerHambre_y = barra_y + barra_h + barra_padding;
-    getSketch().stroke(0, 100);
+    getSketch().noStroke();
     getSketch().fill(0, 100);
     getSketch().rect(barra_x, playerHambre_y, barra_w, barra_h, borderRadius);
 
@@ -61,7 +61,7 @@ export default class HUD {
 
     //player oxigeno
     const playerOxigeno_y = barra_y + barra_h + barra_padding + barra_h + barra_padding;
-    getSketch().stroke(0, 100);
+    getSketch().noStroke();
     getSketch().fill(0, 100);
     getSketch().rect(barra_x, playerOxigeno_y, barra_w, barra_h, borderRadius);
 
@@ -70,21 +70,6 @@ export default class HUD {
     getSketch().noStroke();
     getSketch().fill(Colores.colorOxigeno);
     getSketch().rect(barra_x, playerOxigeno_y, this.oxigenoW, barra_h, borderRadius);
-
-    //Mensaje
-    if (State.mensaje) {
-      const mensaje_w = 200;
-      const mensaje_h = 20;
-      const mensaje_x = canvasItemWidth * canvasRows - mensaje_w - padding;
-      const mensaje_y = padding;
-      getSketch().fill(255);
-      getSketch().rect(mensaje_x, mensaje_y, mensaje_w, mensaje_h, 8);
-      getSketch().fill(0);
-      getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
-      getSketch().textSize(12);
-      getSketch().noStroke();
-      getSketch().text(State.mensaje, mensaje_x + 4, mensaje_y + 4);
-    }
 
     //Armas
     const arma_w = 36;
@@ -95,19 +80,32 @@ export default class HUD {
     const imgPala = Recursos.imagenes.pala1;
     const imgHacha = Recursos.imagenes.hacha1;
 
+    //Equipado
+    if (player.itemEquipado) {
+      getSketch().fill(255);
+      getSketch().stroke(0);
+      getSketch().strokeWeight(player.itemEquipadoSeleccionado == true ? 2 : 0);
+      getSketch().rect(arma_x - arma_w * 4 - arma_padding * 4, arma_y, arma_w, arma_w);
+    }
+    // getSketch().strokeWeight(player.itemEquipado ? 2 : 0);
+    // getSketch().image(imgPico, arma_x - arma_w * 3 - arma_padding * 3 + 4, arma_y + 4, arma_w - 8, arma_w - 8);
+
+    //Pico
     getSketch().fill(255);
     getSketch().stroke(0);
-    getSketch().strokeWeight(player.arma instanceof Pico ? 2 : 0);
+    getSketch().strokeWeight(player.itemEquipadoSeleccionado ? 0 : player.arma instanceof Pico ? 2 : 0);
     getSketch().rect(arma_x - arma_w * 3 - arma_padding * 3, arma_y, arma_w, arma_w);
     getSketch().image(imgPico, arma_x - arma_w * 3 - arma_padding * 3 + 4, arma_y + 4, arma_w - 8, arma_w - 8);
 
+    //Pala
     getSketch().stroke(0);
-    getSketch().strokeWeight(player.arma instanceof Pala ? 2 : 0);
+    getSketch().strokeWeight(player.itemEquipadoSeleccionado ? 0 : player.arma instanceof Pala ? 2 : 0);
     getSketch().rect(arma_x - arma_w * 2 - arma_padding * 2, arma_y, arma_w, arma_w);
     getSketch().image(imgPala, arma_x - arma_w * 2 - arma_padding * 2 + 4, arma_y + 4, arma_w - 8, arma_w - 8);
 
+    //Hacha
     getSketch().stroke(0);
-    getSketch().strokeWeight(player.arma instanceof Hacha ? 2 : 0);
+    getSketch().strokeWeight(player.itemEquipadoSeleccionado ? 0 : player.arma instanceof Hacha ? 2 : 0);
     getSketch().rect(arma_x - arma_w * 1 - arma_padding * 1, arma_y, arma_w, arma_w);
     getSketch().image(imgHacha, arma_x - arma_w * 1 - arma_padding * 1 + 4, arma_y + 4, arma_w - 8, arma_w - 8);
   }

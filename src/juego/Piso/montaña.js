@@ -7,10 +7,18 @@ export default class PisoMontaña extends Piso {
   constructor(pos, altura) {
     super(pos, getColor(altura));
     this.altura = altura;
+    this.puedeHundir = true;
+    this.golpesHundir = 5;
+    this.golpesHundirMaximo = 5;
   }
 
   draw(i, j, canvasItemWidth) {
-    getSketch().fill(this.color);
+    let color = this.color;
+    if (this.hundido == true) {
+      color = Colores.pisoHundido;
+    }
+
+    getSketch().fill(color);
     getSketch().noStroke();
     getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
   }

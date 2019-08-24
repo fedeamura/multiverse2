@@ -1,22 +1,27 @@
 import { getSketch } from "_sketch";
 import State from "_state";
 import Parametros from "_parametros";
+import Constantes from "_constantes";
 
 //Pisos
-import PisoAgua from "../juego/piso/agua";
-import Flor from "../juego/flor";
-import Arbol from "../juego/arbol";
-import Nieve from "../juego/nieve";
-import Palo from "../juego/palo";
+import PisoAgua from "juego/piso/agua";
+import PisoBase from "juego/piso/base";
 
-import { Hacha, Pico, Pala } from "../juego/player";
-import Arbusto from "../juego/arbusto";
-import Piedra from "../juego/piedra";
-import Oro from "../juego/oro";
+import { Hacha, Pico, Pala } from "juego/player";
+import Arbusto from "juego/arbusto";
+import Palo from "juego/palo";
+import Flor from "juego/flor";
+import Arbol from "juego/arbol";
+import Nieve from "juego/nieve";
+import Piedra from "juego/piedra";
+import Oro from "juego/oro";
+import Diamante from "juego/diamante";
+import Tabla from "juego/tabla";
 
 //rules
-import Rules_Mapa from "../rules/Rules_Mapa";
-import Rules_Juego from "../rules/Rules_Juego";
+import Rules_Mapa from "rules/Rules_Mapa";
+import Rules_Juego from "rules/Rules_Juego";
+import SemillaArbol from "juego/semillaArbol";
 
 const metodos = {
   calcularPosicion: () => {
@@ -30,10 +35,7 @@ const metodos = {
     const mapaCols = Parametros.mapaCols;
     const difCols = mapaCols - canvasCols;
 
-    return getSketch().createVector(
-      offsetX + getSketch().floor((canvasRows + difRows) / 2),
-      offsetY + getSketch().floor((canvasCols + difCols) / 2)
-    );
+    return getSketch().createVector(offsetX + getSketch().floor((canvasRows + difRows) / 2), offsetY + getSketch().floor((canvasCols + difCols) / 2));
   },
   reiniciarPosicion: () => {
     State.offsetX = 0;
@@ -43,7 +45,20 @@ const metodos = {
     State.player.dirContador = 0;
   },
   isNadando: () => {
-    return State.itemMapa instanceof PisoAgua && State.itemMapa.profundidad > 1;
+    let item = State.itemMapa;
+    if (item == undefined) return false;
+    if (!(item instanceof PisoAgua)) return false;
+    if (item.profundidad <= 1) return false;
+
+    let tieneTabla = false;
+    (item.items || []).forEach(element => {
+      if (element instanceof Tabla) {
+        tieneTabla = true;
+      }
+    });
+
+    if (tieneTabla) return false;
+    return true;
   },
   mover: dir => {
     if (this.timerMover != undefined) {
@@ -104,8 +119,8 @@ const metodos = {
     player.sumarHambre();
 
     //Oxigeno
-    let profundidad = State.itemMapa.bioma.profundidad || 1;
-    if (profundidad != 1) {
+    let nadando = metodos.isNadando();
+    if (nadando == true) {
       player.subirPuntoNadador();
       player.restarOxigeno();
     } else {
@@ -115,6 +130,8 @@ const metodos = {
 
     //Mapa
     Rules_Mapa.crearMapa();
+
+    Rules_Juego.onMovido();
   },
   dejarDeMover: () => {
     if (this.timerMover != undefined) {
@@ -127,6 +144,13 @@ const metodos = {
   golpear: () => {
     const player = State.player;
     if (player.puedeGolpear == false) return;
+    if (metodos.isNadando() == true) return;
+
+    //Si es item equipado
+    if (player.itemEquipadoSeleccionado == true) {
+      metodos.colocarItem(player.itemEquipado);
+      return;
+    }
 
     player.moverBrazo();
     player.sumarHambre();
@@ -167,13 +191,23 @@ const metodos = {
         break;
     }
 
-    //Item
-    if (item.items == undefined || item.items.length == 0) {
-      player.setPoderGolpe(poder);
+    const arma = player.arma;
+
+    //Cavo (para hundir)
+    if (item.puedeHundir == true && item.hundido != true && (item.items || [].length) == 0 && arma instanceof Pala && !(item instanceof PisoAgua) && !(item instanceof PisoBase)) {
+      if (item.golpesHundir > 0) {
+        item.golpesHundir -= 1;
+      }
+
+      if (item.golpesHundir == 0) {
+        item.hundido = true;
+      }
       return;
     }
 
-    const arma = player.arma;
+    //Si no hay items
+    if (item.items == undefined || item.items.length == 0) return;
+
     const element = item.items[item.items.length - 1];
 
     let poder = 0.5;
@@ -184,21 +218,17 @@ const metodos = {
     }
 
     //Jardinero
-    if (
-      arma instanceof Pala &&
-      (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve || element instanceof Palo)
-    ) {
+    if (arma instanceof Pala && (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve || element instanceof Palo)) {
       poder = 1 + 0.5 * player.nivelJardinero;
     }
 
     //Minero
-    if (arma instanceof Pico && (element instanceof Piedra || element instanceof Oro)) {
+    if (arma instanceof Pico && (element instanceof Piedra || element instanceof Oro || element instanceof Diamante)) {
       poder = 1 + 0.5 * player.nivelMinero;
     }
 
     //
     console.log("Porder de golpe", poder);
-    player.setPoderGolpe(poder);
 
     //Hago el golpe
     Rules_Juego.onItemGolpeado(item, element, poder);
@@ -208,6 +238,218 @@ const metodos = {
     //Destruyo el item
     item.items = item.items.slice(0, item.items.length - 1);
     Rules_Juego.onItemDestruido(item, element);
+  },
+  getItemMirando: () => {
+    const player = State.player;
+
+    const pos = player.pos;
+    let item;
+
+    switch (player.dir) {
+      case "l":
+        {
+          if (pos.x == 0) return;
+          item = State.mapa[pos.x - 1][pos.y];
+        }
+        break;
+      case "r":
+        {
+          if (pos.x == State.mapa.length - 1) return;
+          item = State.mapa[pos.x + 1][pos.y];
+        }
+        break;
+      case "u":
+        {
+          if (pos.y == 0) return;
+          item = State.mapa[pos.x][pos.y - 1];
+        }
+        break;
+
+      case "d":
+        {
+          if (pos.y == State.mapa.length - 1) return;
+          item = State.mapa[pos.x][pos.y + 1];
+        }
+        break;
+    }
+
+    return item;
+  },
+  equiparItem: item => {
+    switch (item) {
+      case Constantes.ITEM_TABLA:
+        {
+          if (State.items.tabla == 0) {
+            Rules_Juego.nuevoMensaje("No tiene tablas");
+            return;
+          }
+
+          State.player.itemEquipado = item;
+          State.player.itemEquipadoSeleccionado = true;
+          Rules_Juego.nuevoMensaje("Tabla equipada");
+        }
+        break;
+
+      case Constantes.ITEM_SEMILLA_ARBOL:
+        {
+          if (State.items.semillaArbol == 0) {
+            Rules_Juego.nuevoMensaje("No tiene semillas");
+            return;
+          }
+
+          State.player.itemEquipado = item;
+          State.player.itemEquipadoSeleccionado = true;
+          Rules_Juego.nuevoMensaje("Semillas equipadas");
+        }
+        break;
+    }
+  },
+  colocarItem: item => {
+    if (metodos.isNadando() == true) {
+      Rules_Juego.nuevoMensaje("No puede colocar items mientras está nadando");
+      return;
+    }
+
+    let itemMirando = metodos.getItemMirando();
+    if (itemMirando == undefined) {
+      Rules_Juego.nuevoMensaje("No se puede colocar el item");
+      return;
+    }
+
+    if (itemMirando.items != undefined && itemMirando.items.length != 0) {
+      Rules_Juego.nuevoMensaje("El terreno no esta libre");
+      return;
+    }
+
+    switch (item) {
+      case Constantes.ITEM_TABLA:
+        {
+          if (State.items.tabla == 0) {
+            Rules_Juego.nuevoMensaje("No tiene una tablas");
+            return;
+          }
+
+          State.items.tabla -= 1;
+          itemMirando.items.push(new Tabla());
+
+          Rules_Juego.nuevoMensaje("Tabla colocada");
+        }
+        break;
+
+      case Constantes.ITEM_SEMILLA_ARBOL:
+        {
+          if (itemMirando.hundido != true) {
+            Rules_Juego.nuevoMensaje("Terreno no hundido");
+            return;
+          }
+
+          if (State.items.semillaArbol == 0) {
+            Rules_Juego.nuevoMensaje("No tiene semillas de arbol");
+            return;
+          }
+
+          var s = new SemillaArbol(itemMirando);
+          State.items.semillaArbol -= 1;
+          itemMirando.items.push(s);
+
+          State.semillasArbol.push(s);
+          Rules_Juego.nuevoMensaje("Semilla colocada");
+        }
+        break;
+    }
+  },
+  comer: item => {
+    console.log("Por comer", item);
+    const player = State.player;
+
+    switch (item) {
+      case Constantes.ITEM_MANZANA:
+        {
+          if (State.items.manzana == 0) {
+            Rules_Juego.nuevoMensaje("No tiene ninguna manzana");
+            return;
+          }
+
+          if (player.hambre == player.hambreMaxima) {
+            Rules_Juego.nuevoMensaje("No tiene nada de hambre");
+            return;
+          }
+
+          State.items.manzana -= 1;
+
+          const cantidad = 10;
+          console.log("Como manzana " + cantidad);
+          player.restaurarHambre(cantidad);
+          Rules_Juego.onItemComido(item, cantidad);
+        }
+        break;
+
+      case Constantes.ITEM_BAYA_ROJA:
+        {
+          if (State.items.bayaRoja == 0) {
+            Rules_Juego.nuevoMensaje("No tiene ninguna baya roja");
+            return;
+          }
+
+          if (player.hambre == player.hambreMaxima) {
+            Rules_Juego.nuevoMensaje("No tiene nada de hambre");
+            return;
+          }
+
+          State.items.bayaRoja -= 1;
+
+          const cantidad = 5;
+          console.log("Como Baya " + cantidad);
+
+          player.restaurarHambre(cantidad);
+          Rules_Juego.onItemComido(item, cantidad);
+        }
+        break;
+
+      case Constantes.ITEM_BAYA_AZUL:
+        {
+          if (State.items.bayaAzul == 0) {
+            Rules_Juego.nuevoMensaje("No tiene ninguna baya azul");
+            return;
+          }
+
+          if (player.hambre == player.hambreMaxima) {
+            Rules_Juego.nuevoMensaje("No tiene nada de hambre");
+            return;
+          }
+
+          State.items.bayaAzul -= 1;
+
+          const cantidad = 5;
+          console.log("Como Baya " + cantidad);
+
+          player.restaurarHambre(cantidad);
+          Rules_Juego.onItemComido(item, cantidad);
+        }
+        break;
+
+      case Constantes.ITEM_BAYA_VIOLETA:
+        {
+          if (State.items.bayaVioleta == 0) {
+            Rules_Juego.nuevoMensaje("No tiene ninguna baya violeta");
+            return;
+          }
+
+          if (player.hambre == player.hambreMaxima) {
+            Rules_Juego.nuevoMensaje("No tiene nada de hambre");
+            return;
+          }
+
+          State.items.bayaVioleta -= 1;
+
+          const cantidad = 5;
+          console.log("Como Baya " + cantidad);
+
+          player.restaurarHambre(cantidad);
+          Rules_Juego.onItemComido(item, cantidad);
+        }
+        break;
+    }
   }
 };
 

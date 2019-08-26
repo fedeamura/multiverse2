@@ -12,10 +12,10 @@ export default class Nave extends Item {
     this.color = getColor();
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     getSketch().fill(this.color);
     getSketch().noStroke();
-    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().rect(x, y, w, h);
   }
 
   golpear(poder) {

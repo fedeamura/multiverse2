@@ -3,8 +3,11 @@ import Parametros from "_parametros";
 import State from "_state";
 import Colores from "_colores";
 import Recursos from "_recursos";
+import Constantes from "_constantes";
 
 import { Pico, Pala, Hacha } from "juego/player";
+
+import Tabla from "juego/tabla";
 
 export default class HUD {
   constructor() {
@@ -85,7 +88,14 @@ export default class HUD {
       getSketch().fill(255);
       getSketch().stroke(0);
       getSketch().strokeWeight(player.itemEquipadoSeleccionado == true ? 2 : 0);
-      getSketch().rect(arma_x - arma_w * 4 - arma_padding * 4, arma_y, arma_w, arma_w);
+
+
+      const x = arma_x - arma_w * 4 - arma_padding * 4;
+      const y = arma_y;
+      getSketch().rect(x, y, arma_w, arma_w);
+
+      //Preview
+      player.itemEquipadoEntity.draw(x, y, arma_w, arma_w)
     }
     // getSketch().strokeWeight(player.itemEquipado ? 2 : 0);
     // getSketch().image(imgPico, arma_x - arma_w * 3 - arma_padding * 3 + 4, arma_y + 4, arma_w - 8, arma_w - 8);

@@ -203,6 +203,8 @@ const sketch = p => {
     Colores.colorOxigeno = p.color(3, 155, 229);
 
     Colores.tabla = p.color("#795548");
+    Colores.muro = p.color("#6d4c41");
+
     Colores.pisoHundido = p.color("#4e342e");
     Colores.semillaArbol = p.color("#8bc34a");
 
@@ -367,33 +369,31 @@ const sketch = p => {
         let mi = i + State.initialMapX + State.offsetX;
         let mj = j + State.initialMapY + State.offsetY;
 
+        const x = i * canvasItemWidth;
+        const y = j * canvasItemWidth;
+
         if (mi < 0 || mj < 0 || mi >= mapaRows || mj >= mapaCols) {
           p.fill(255);
           p.noStroke();
-          p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+          p.rect(x, y, canvasItemWidth, canvasItemWidth, canvasItemWidth);
         } else {
           try {
             let mapaItem = State.mapa[mi][mj];
-            mapaItem.draw(i, j, canvasItemWidth);
+            mapaItem.draw(x, y, canvasItemWidth, canvasItemWidth);
 
             //Huellas
-            player.drawHuella(i, j, canvasItemWidth, mi, mj);
-
-            // //Grilla
-            // p.stroke(255, 10);
-            // p.fill(0, 0);
-            // p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+            player.drawHuella(x, y, canvasItemWidth, canvasItemWidth, mi, mj);
 
             //Item
             if (mapaItem.items) {
               mapaItem.items.forEach(element => {
-                element.draw(i, j, canvasItemWidth);
+                element.draw(x, y, canvasItemWidth, canvasItemWidth);
               });
             }
           } catch (ex) {
             p.fill(255);
             p.noStroke();
-            p.rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+            p.rect(x, y, canvasItemWidth, canvasItemWidth);
           }
         }
       }

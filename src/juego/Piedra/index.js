@@ -14,11 +14,11 @@ export default class Piedra extends Item {
     this.color = getColor();
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     getSketch().strokeWeight(2);
     getSketch().stroke(0);
     getSketch().fill(this.color);
-    getSketch().rect(i * canvasItemWidth + 4, j * canvasItemWidth + 4, canvasItemWidth - 8, canvasItemWidth - 8);
+    getSketch().rect(x + w * 0.1, y + h * 0.1, w - w * 0.2, h - h * 0.2);
   }
 }
 

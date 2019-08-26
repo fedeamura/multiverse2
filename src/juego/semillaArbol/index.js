@@ -7,6 +7,7 @@ const VIDA_MAX = 1;
 export default class SemillaArbol extends Item {
   constructor(piso) {
     super();
+
     this.item = piso;
     this.bloquear = false;
     this.vida = VIDA_MAX;
@@ -17,18 +18,13 @@ export default class SemillaArbol extends Item {
     this.contadorMaximo = 20;
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     getSketch().noStroke();
     getSketch().fill(this.color);
-
-    getSketch().rect(i * canvasItemWidth + canvasItemWidth * 0.3, j * canvasItemWidth + canvasItemWidth * 0.5, 4, 4);
-    getSketch().rect(i * canvasItemWidth + canvasItemWidth * 0.5, j * canvasItemWidth + canvasItemWidth * 0.7, 4, 4);
-    getSketch().rect(i * canvasItemWidth + canvasItemWidth * 0.7, j * canvasItemWidth + canvasItemWidth * 0.2, 4, 4);
-    getSketch().rect(i * canvasItemWidth + canvasItemWidth * 0.2, j * canvasItemWidth + canvasItemWidth * 0.8, 4, 4);
-
-    // getSketch().rect(i * canvasItemWidth * 1.5, j * canvasItemWidth * 1.2, 4, 4);
-    // getSketch().rect(i * canvasItemWidth * 1.2, j * canvasItemWidth * 1.7, 4, 4);
-    // getSketch().rect(i * canvasItemWidth * 1.3, j * canvasItemWidth * 1.6, 4, 4);
+    getSketch().rect(x + w * 0.3, y + h * 0.5, w * 0.1, h * 0.1);
+    getSketch().rect(x + w * 0.5, y + h * 0.7, w * 0.1, h * 0.1);
+    getSketch().rect(x + w * 0.7, y + h * 0.2, w * 0.1, h * 0.1);
+    getSketch().rect(x + w * 0.2, y + h * 0.8, w * 0.1, h * 0.1);
   }
 }
 

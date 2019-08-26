@@ -1,10 +1,8 @@
 import { getSketch } from "_sketch";
-import State from "_state";
 import Constantes from "_constantes";
 
 //Rules
 import Rules_Player from "rules/Rules_Player";
-import Rules_Juego from "rules/Rules_Juego";
 
 export default class Item {
   constructor(item) {
@@ -16,6 +14,9 @@ export default class Item {
     let bb = [];
     let b = [];
 
+    const itemsColocar = [Constantes.ITEM_TABLA, Constantes.ITEM_SEMILLA_ARBOL, Constantes.ITEM_MURO];
+    const itemsEquipar = [Constantes.ITEM_TABLA, Constantes.ITEM_SEMILLA_ARBOL, Constantes.ITEM_MURO];
+
     //Comer
     if (item.tipo == Constantes.ITEM_TIPO_COMIDA) {
       if (b.length == 3) {
@@ -26,7 +27,7 @@ export default class Item {
     }
 
     //Colocar
-    if (item.value == Constantes.ITEM_TABLA || item.value == Constantes.ITEM_SEMILLA_ARBOL) {
+    if (itemsColocar.indexOf(item.value) != -1) {
       if (b.length == 3) {
         bb.push(b);
         b = [];
@@ -35,7 +36,7 @@ export default class Item {
     }
 
     //Equipar
-    if (item.value == Constantes.ITEM_TABLA || item.value == Constantes.ITEM_SEMILLA_ARBOL) {
+    if (itemsEquipar.indexOf(item.value) != -1) {
       if (b.length == 3) {
         bb.push(b);
         b = [];
@@ -58,8 +59,6 @@ export default class Item {
         this.botones.push(item);
       });
     }
-
-    console.log(this.botones);
   }
 
   keyPressed(key) {

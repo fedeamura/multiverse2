@@ -5,14 +5,15 @@ import Piso from "juego/piso/index";
 
 export default class PisoMontaña extends Piso {
   constructor(pos, altura) {
-    super(pos, getColor(altura));
+    super(pos);
+    this.color = getColor(altura);
     this.altura = altura;
     this.puedeHundir = true;
     this.golpesHundir = 5;
     this.golpesHundirMaximo = 5;
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     let color = this.color;
     if (this.hundido == true) {
       color = Colores.pisoHundido;
@@ -20,7 +21,7 @@ export default class PisoMontaña extends Piso {
 
     getSketch().fill(color);
     getSketch().noStroke();
-    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().rect(x, y, w, h);
   }
 }
 

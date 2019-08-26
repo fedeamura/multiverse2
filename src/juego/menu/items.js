@@ -14,6 +14,12 @@ const BOTONES = [
     //Tabla
     { texto: "Tabla", value: Constantes.ITEM_TABLA, tipo: Constantes.TIPO_ITEM_CONSTRUCCCION }
   ],
+  [
+    //Muro
+    { texto: "Muro", value: Constantes.ITEM_MURO, tipo: Constantes.TIPO_ITEM_CONSTRUCCCION },
+    {},
+    {}
+  ],
   //Comida
   [{ titulo: "Comida" }, {}, {}],
   [
@@ -100,6 +106,13 @@ export default class Menu {
                 b.cantidad = State.items.tabla;
               }
               break;
+
+            case Constantes.ITEM_MURO:
+              {
+                b.cantidad = State.items.muro;
+              }
+              break;
+
             case Constantes.ITEM_MANZANA:
               {
                 b.cantidad = State.items.manzana;

@@ -17,11 +17,12 @@ import Piedra from "juego/piedra";
 import Oro from "juego/oro";
 import Diamante from "juego/diamante";
 import Tabla from "juego/tabla";
+import SemillaArbol from "juego/semillaArbol";
+import Muro from "juego/muro";
 
 //rules
 import Rules_Mapa from "rules/Rules_Mapa";
 import Rules_Juego from "rules/Rules_Juego";
-import SemillaArbol from "juego/semillaArbol";
 
 const metodos = {
   calcularPosicion: () => {
@@ -101,14 +102,6 @@ const metodos = {
       console.log("Hay un bloque que me obstruye el paso");
       return;
     }
-
-    // let monstruosEnPosNueva = _.filter(State.monstruosVisibles, monstruo => {
-    //   return monstruo.i == posNueva.x && monstruo.j == posNueva.y && monstruo.muerto == false;
-    // });
-    // if (monstruosEnPosNueva.length != 0) {
-    //   console.log("Hay un monstruo que me obstruye el paso");
-    //   return;
-    // }
 
     State.offsetX += offsetX_Nuevo;
     State.offsetY += offsetY_Nuevo;
@@ -284,9 +277,24 @@ const metodos = {
             return;
           }
 
+          State.player.itemEquipadoEntity = new Tabla();
           State.player.itemEquipado = item;
           State.player.itemEquipadoSeleccionado = true;
           Rules_Juego.nuevoMensaje("Tabla equipada");
+        }
+        break;
+
+      case Constantes.ITEM_MURO:
+        {
+          if (State.items.muro == 0) {
+            Rules_Juego.nuevoMensaje("No tiene muros");
+            return;
+          }
+
+          State.player.itemEquipadoEntity = new Muro();
+          State.player.itemEquipado = item;
+          State.player.itemEquipadoSeleccionado = true;
+          Rules_Juego.nuevoMensaje("Muro equipada");
         }
         break;
 
@@ -297,6 +305,7 @@ const metodos = {
             return;
           }
 
+          State.player.itemEquipadoEntity = new SemillaArbol();
           State.player.itemEquipado = item;
           State.player.itemEquipadoSeleccionado = true;
           Rules_Juego.nuevoMensaje("Semillas equipadas");
@@ -325,7 +334,7 @@ const metodos = {
       case Constantes.ITEM_TABLA:
         {
           if (State.items.tabla == 0) {
-            Rules_Juego.nuevoMensaje("No tiene una tablas");
+            Rules_Juego.nuevoMensaje("No tiene tablas");
             return;
           }
 
@@ -333,6 +342,20 @@ const metodos = {
           itemMirando.items.push(new Tabla());
 
           Rules_Juego.nuevoMensaje("Tabla colocada");
+        }
+        break;
+
+      case Constantes.ITEM_MURO:
+        {
+          if (State.items.muro == 0) {
+            Rules_Juego.nuevoMensaje("No tiene muros");
+            return;
+          }
+
+          State.items.muro -= 1;
+          itemMirando.items.push(new Muro());
+
+          Rules_Juego.nuevoMensaje("Muro colocado");
         }
         break;
 

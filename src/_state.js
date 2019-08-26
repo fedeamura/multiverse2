@@ -19,6 +19,7 @@ const State = {
     madera: 0,
     palo: 0,
     tabla: 200,
+    muro: 200,
     manzana: 0,
     bayaRoja: 0,
     bayaAzul: 0,

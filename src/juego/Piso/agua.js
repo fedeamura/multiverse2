@@ -5,14 +5,15 @@ import Piso from "juego/piso/index";
 
 export default class PisoAgua extends Piso {
   constructor(pos, profundidad) {
-    super(pos, getColor(profundidad));
+    super(pos);
+    this.color = getColor(profundidad);
     this.profundidad = profundidad;
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     getSketch().fill(this.color);
     getSketch().noStroke();
-    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().rect(x, y, w, h);
   }
 }
 

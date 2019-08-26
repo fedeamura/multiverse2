@@ -5,13 +5,14 @@ import Piso from "juego/piso/index";
 
 export default class PisoBosque extends Piso {
   constructor(pos) {
-    super(pos, Colores.pasto3);
+    super(pos);
+    this.color = getColor();
     this.puedeHundir = true;
     this.golpesHundir = 3;
     this.golpesHundirMaximo = 3;
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     let color = this.color;
     if (this.hundido == true) {
       color = Colores.pisoHundido;
@@ -19,6 +20,10 @@ export default class PisoBosque extends Piso {
 
     getSketch().fill(color);
     getSketch().noStroke();
-    getSketch().rect(i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().rect(x, y, w, h);
   }
+}
+
+const getColor = () => {
+  return Colores.pasto3;
 }

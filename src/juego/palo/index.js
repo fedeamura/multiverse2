@@ -16,14 +16,14 @@ export default class Palo extends Item {
     this.h = getSketch().random([0.2, 0.3, 0.4]);
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     getSketch().push();
-    getSketch().translate(i * canvasItemWidth + canvasItemWidth / 2, j * canvasItemWidth + canvasItemWidth / 2);
+    getSketch().translate(x + w / 2, y + h / 2);
     getSketch().rotate(this.rot);
 
     getSketch().stroke(this.color);
     getSketch().strokeWeight(2);
-    getSketch().line(0, 0, canvasItemWidth * this.w, canvasItemWidth * this.h);
+    getSketch().line(0, 0, w * this.w, h * this.h);
 
     getSketch().pop();
   }

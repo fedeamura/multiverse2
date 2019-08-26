@@ -8,6 +8,7 @@ const constantes = {
   ITEM_BAYA_AZUL: "item_baya_azul",
   ITEM_BAYA_VIOLETA: "item_baya_violeta",
   ITEM_TABLA: "item_tabla",
+  ITEM_MURO: "item_muro",
 
   ITEM_PIEDRA: "item_piedra",
   ITEM_ORO: "item_oro",

@@ -18,8 +18,8 @@ export default class Arbol extends Item {
     this.recompensaSemilla = getSketch().random([1, 5]);
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     let img = Recursos.imagenes.arbol1;
-    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().image(img, x, y, w, h);
   }
 }

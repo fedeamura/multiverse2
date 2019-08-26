@@ -9,10 +9,10 @@ export default class FlorBosque extends Flor {
     super(color);
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     const img = this.getImagen();
 
-    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().image(img, x, y, w, h);
   }
 
   getImagen() {

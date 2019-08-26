@@ -15,9 +15,9 @@ export default class Arbusto extends Item {
     this.color = getSketch().random(["rojo", "azul", "violeta"]);
   }
 
-  draw(i, j, canvasItemWidth) {
+  draw(x, y, w, h) {
     const img = this.getImagen();
-    getSketch().image(img, i * canvasItemWidth, j * canvasItemWidth, canvasItemWidth, canvasItemWidth);
+    getSketch().image(img, x, y, w, h);
   }
 
   getImagen() {

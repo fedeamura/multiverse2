@@ -8,7 +8,6 @@ export default class Item {
   }
 
   golpear(poder) {
-    console.log("golpe");
     if (this.rompible === false) return false;
 
     this.vida -= poder;

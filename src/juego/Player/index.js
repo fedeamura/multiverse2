@@ -23,6 +23,7 @@ export default class Player {
     this.arma = this.armaPico;
     this.poderGolpe = undefined;
 
+    this.itemEquipadoEntity = undefined;
     this.itemEquipado = undefined;
     this.itemEquipadoSeleccionado = false;
 
@@ -427,21 +428,10 @@ export default class Player {
       getSketch().image(imgPlayer, -canvasItemWidth / 2, -canvasItemWidth / 2, canvasItemWidth, canvasItemWidth);
     }
 
-    // //Poder
-    // if (this.golpeando && this.poderGolpe != undefined) {
-    //   if (this.dir == "r") getSketch().scale(-1, 1);
-    //   if (this.dir == "l") getSketch().translate(-canvasItemWidth, canvasItemWidth / 2);
-    //   if (this.dir == "r") getSketch().translate(canvasItemWidth - 10, canvasItemWidth / 2);
-    //   if (this.dir == "u") getSketch().translate(0, -canvasItemWidth / 4);
-    //   if (this.dir == "d") getSketch().translate(-canvasItemWidth / 4, canvasItemWidth * 1.6);
-    //   getSketch().fill(255, 0, 0);
-    //   getSketch().textAlign(getSketch().LEFT, getSketch().TOP);
-    //   getSketch().text(this.poderGolpe || "1", 0, -canvasItemWidth / 2);
-    // }
     getSketch().pop();
   }
 
-  drawHuella(i, j, canvasItemWidth, mi, mj) {
+  drawHuella(x, y, w, h, mi, mj) {
     try {
       let huella;
       for (let iH = 0; iH < this.huellas.length; iH++) {
@@ -456,10 +446,10 @@ export default class Player {
         let o = huella.opacity;
         getSketch().fill(0, o);
         getSketch().rect(
-          i * canvasItemWidth + canvasItemWidth * 0.3,
-          j * canvasItemWidth + canvasItemWidth * 0.3,
-          canvasItemWidth * 0.1 * (huella.vertical ? 1 : 2),
-          canvasItemWidth * 0.1 * (huella.vertical ? 2 : 1),
+          x + w * 0.3,
+          y + h * 0.3,
+          w * 0.1 * (huella.vertical ? 1 : 2),
+          h * 0.1 * (huella.vertical ? 2 : 1),
           5,
           5,
           5,
@@ -468,10 +458,10 @@ export default class Player {
 
         getSketch().fill(0, o);
         getSketch().rect(
-          i * canvasItemWidth + canvasItemWidth * 0.6,
-          j * canvasItemWidth + canvasItemWidth * 0.5,
-          canvasItemWidth * 0.1 * (huella.vertical ? 1 : 2),
-          canvasItemWidth * 0.1 * (huella.vertical ? 2 : 1),
+          x + w * 0.6,
+          y + h * 0.5,
+          w * 0.1 * (huella.vertical ? 1 : 2),
+          h * 0.1 * (huella.vertical ? 2 : 1),
           5,
           5,
           5,

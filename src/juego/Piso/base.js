@@ -8,12 +8,10 @@ export default class PisoBase extends Piso {
     this.color = getColor(centro);
   }
 
-  draw(i, j, canvasItemWidth) {
-    const x = i * canvasItemWidth;
-    const y = j * canvasItemWidth;
+  draw(x, y, w, h) {
     getSketch().noStroke();
     getSketch().fill(this.color);
-    getSketch().rect(x, y, canvasItemWidth, canvasItemWidth);
+    getSketch().rect(x, y, w, h);
   }
 }
 

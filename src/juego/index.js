@@ -178,35 +178,38 @@ const sketch = p => {
     Recursos.imagenes.piedra1 = p.loadImage(ResourcePiedra1);
     Recursos.imagenes.piedra2 = p.loadImage(ResourcePiedra2);
 
-    Colores.agua1 = p.color(100, 181, 246);
-    Colores.agua2 = p.color(66, 165, 245);
-    Colores.agua3 = p.color(33, 150, 243);
-    Colores.agua4 = p.color(30, 136, 229);
-    Colores.agua5 = p.color(25, 118, 210);
-    Colores.agua6 = p.color(21, 101, 192);
-    Colores.tierra1 = p.color("#795548");
-    Colores.tierra2 = p.color("#6d4c41");
-    Colores.tierra3 = p.color("#5d4037");
-    Colores.pasto1 = p.color("#66bb6a");
-    Colores.pasto2 = p.color("#4caf50");
-    Colores.pasto3 = p.color("#43a047");
-    Colores.arena = p.color(255, 236, 179);
-    Colores.nieve = p.color(255);
-    Colores.nave = p.color("#FFD700");
+    Colores.base = "#000000";
+    Colores.baseCentro = "#64B5F6";
 
-    Colores.diamante = p.color(0, 255, 255);
-    Colores.piedra = p.color("#9e9e9e");
-    Colores.oro = p.color("#FFD700");
+    Colores.agua1 = "#64B5F6";
+    Colores.agua2 = "#42A5F5";
+    Colores.agua3 = "#2196F3";
+    Colores.agua4 = "#1E88E5";
+    Colores.agua5 = "#1976D2";
+    Colores.agua6 = "#1565C0";
+    Colores.tierra1 = "#795548";
+    Colores.tierra2 = "#6d4c41";
+    Colores.tierra3 = "#5d4037";
+    Colores.pasto1 = "#66bb6a";
+    Colores.pasto2 = "#4caf50";
+    Colores.pasto3 = "#43a047";
+    Colores.arena = "#FFECB3";
+    Colores.nieve = "#FFFFFF";
+    Colores.nave = "#FFD700";
 
-    Colores.colorSalud = p.color(100, 221, 23);
-    Colores.colorHambre = p.color(229, 57, 53);
-    Colores.colorOxigeno = p.color(3, 155, 229);
+    Colores.diamante = "#00FFFF";
+    Colores.piedra = "#9e9e9e";
+    Colores.oro = "#FFD700";
 
-    Colores.tabla = p.color("#795548");
-    Colores.muro = p.color("#6d4c41");
+    Colores.colorSalud = "#64DD17";
+    Colores.colorHambre = "#E53935";
+    Colores.colorOxigeno = "#039BE5";
 
-    Colores.pisoHundido = p.color("#4e342e");
-    Colores.semillaArbol = p.color("#8bc34a");
+    Colores.tabla = "#795548";
+    Colores.muro = "#6d4c41";
+
+    Colores.pisoHundido = "#4e342e";
+    Colores.semillaArbol = "#8bc34a";
 
     State.initialMapX = p.floor((Parametros.mapaRows - Parametros.canvasRows) / 2);
     State.initialMapY = p.floor((Parametros.mapaCols - Parametros.canvasCols) / 2);
@@ -219,14 +222,40 @@ const sketch = p => {
 
     //Genero el mapa
     Rules_Mapa.initMapa();
-    Rules_Mapa.crearMapa();
 
     //Pos
     let pos = Rules_Player.calcularPosicion();
     State.player = new Player(pos);
 
     //Item mapa
-    State.itemMapa = State.mapa[pos.x][pos.y];
+    // State.itemMapa = State.mapa[pos.x][pos.y];
+
+    let chunkInicial = Rules_Mapa.getChunkActual(pos.x, pos.y);
+    State.chunks["" + chunkInicial] = Rules_Mapa.generarChunk(chunkInicial);
+    const canvasRows = Parametros.canvasRows;
+    const canvasCols = Parametros.canvasCols;
+    const mapaRows = Parametros.mapaRows;
+
+    // let chunksVisibles = [];
+    State.mapaVisible = [];
+    for (let i = 0; i < canvasRows; i++) {
+      for (let j = 0; j < canvasCols; j++) {
+        let mi = i + State.initialMapX + State.offsetX;
+        let mj = j + State.initialMapY + State.offsetY;
+
+        // console.log(`Pos ${mi},${mj}`);
+
+        if (mi >= 0 && mj >= 0 && mi < mapaRows && mj < mapaRows) {
+          let chunk = Rules_Mapa.getChunkActual(mi, mj);
+
+          let pos = Rules_Mapa.getPosicionEnChunk(mi, mj);
+          if (State.mapaVisible[i] == undefined) State.mapaVisible[i] = [];
+          if (State.mapaVisible[j] == undefined) State.mapaVisible[j] = [];
+
+          State.mapaVisible[i][j] = State.chunks["" + chunk][pos.i][pos.j];
+        }
+      }
+    }
   };
 
   p.setup = () => {
@@ -242,6 +271,22 @@ const sketch = p => {
 
     if (State.menu.visible == true) {
       State.menu.keyPressed(key);
+      return;
+    }
+
+    if (key == "s") {
+      let mapa = JSON.stringify(State.mapa);
+      console.log("Save", State.mapa);
+      console.log("Save", mapa);
+      localStorage.setItem("mapa", mapa);
+      return;
+    }
+
+    if (key == "l") {
+      let mapa = JSON.parse(localStorage.getItem("mapa"));
+      console.log("Load", localStorage.getItem("mapa"));
+      console.log("Load parse", mapa);
+      State.mapa = mapa;
       return;
     }
 
@@ -375,10 +420,12 @@ const sketch = p => {
         if (mi < 0 || mj < 0 || mi >= mapaRows || mj >= mapaCols) {
           p.fill(255);
           p.noStroke();
-          p.rect(x, y, canvasItemWidth, canvasItemWidth, canvasItemWidth);
+          p.rect(x, y, canvasItemWidth, canvasItemWidth);
         } else {
           try {
-            let mapaItem = State.mapa[mi][mj];
+            // let mapaItem = State.mapa[mi][mj];
+            let mapaItem = State.mapaVisible[i][j];
+
             mapaItem.draw(x, y, canvasItemWidth, canvasItemWidth);
 
             //Huellas

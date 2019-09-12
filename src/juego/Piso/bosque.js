@@ -26,4 +26,4 @@ export default class PisoBosque extends Piso {
 
 const getColor = () => {
   return Colores.pasto3;
-}
+};

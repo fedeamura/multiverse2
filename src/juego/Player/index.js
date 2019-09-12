@@ -41,8 +41,15 @@ export default class Player {
 
     this.vel = 1;
 
-    this.playerPos = getSketch().createVector(getSketch().floor(Parametros.canvasRows / 2) * Parametros.canvasItemWidth, getSketch().floor(Parametros.canvasCols / 2) * Parametros.canvasItemHeight);
-    this.pos = pos;
+    let playerPos = getSketch().createVector(
+      getSketch().floor(Parametros.canvasRows / 2) * Parametros.canvasItemWidth,
+      getSketch().floor(Parametros.canvasCols / 2) * Parametros.canvasItemHeight
+    );
+    this.player_x = playerPos.x;
+    this.player_y = playerPos.y;
+
+    this.x = pos.x;
+    this.y = pos.y;
 
     this.dir = "d";
     this.dirContador = 0;
@@ -125,7 +132,8 @@ export default class Player {
   }
 
   mover(pos) {
-    this.pos = pos;
+    this.x = pos.x;
+    this.y = pos.y;
 
     let nadandoNuevo = Rules_Player.isNadando();
     if (this.nadando != nadandoNuevo) this.dirContador = 0;
@@ -148,7 +156,8 @@ export default class Player {
     //Huellas
     this.huellas.push({
       vertical: this.dir == "u" || this.dir == "d",
-      pos: this.pos,
+      x: pos.x,
+      y: pos.y,
       opacity: 50
     });
 
@@ -280,7 +289,7 @@ export default class Player {
 
     //Brazo
     getSketch().angleMode(getSketch().DEGREES);
-    getSketch().translate(this.playerPos.x + canvasItemWidth / 2, this.playerPos.y + canvasItemWidth / 2);
+    getSketch().translate(this.player_x + canvasItemWidth / 2, this.player_y + canvasItemWidth / 2);
     getSketch().scale(1);
 
     //Jugador
@@ -436,7 +445,7 @@ export default class Player {
       let huella;
       for (let iH = 0; iH < this.huellas.length; iH++) {
         let h = this.huellas[iH];
-        if (h.pos.x == mi && h.pos.y == mj) {
+        if (h.x == mi && h.y == mj) {
           huella = h;
         }
       }
@@ -445,28 +454,10 @@ export default class Player {
         huella.opacity = getSketch().lerp(huella.opacity, 0, 0.025);
         let o = huella.opacity;
         getSketch().fill(0, o);
-        getSketch().rect(
-          x + w * 0.3,
-          y + h * 0.3,
-          w * 0.1 * (huella.vertical ? 1 : 2),
-          h * 0.1 * (huella.vertical ? 2 : 1),
-          5,
-          5,
-          5,
-          5
-        );
+        getSketch().rect(x + w * 0.3, y + h * 0.3, w * 0.1 * (huella.vertical ? 1 : 2), h * 0.1 * (huella.vertical ? 2 : 1), 5, 5, 5, 5);
 
         getSketch().fill(0, o);
-        getSketch().rect(
-          x + w * 0.6,
-          y + h * 0.5,
-          w * 0.1 * (huella.vertical ? 1 : 2),
-          h * 0.1 * (huella.vertical ? 2 : 1),
-          5,
-          5,
-          5,
-          5
-        );
+        getSketch().rect(x + w * 0.6, y + h * 0.5, w * 0.1 * (huella.vertical ? 1 : 2), h * 0.1 * (huella.vertical ? 2 : 1), 5, 5, 5, 5);
       }
     } catch (ex) {
       console.log(ex);

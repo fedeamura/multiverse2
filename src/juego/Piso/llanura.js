@@ -27,4 +27,3 @@ export default class PisoLlanura extends Piso {
 const getColor = () => {
   return Colores.pasto2;
 };
-

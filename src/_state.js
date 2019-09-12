@@ -1,4 +1,8 @@
 const State = {
+  mapaVisible: [],
+  chunks: {},
+
+  //
   mapa: [],
   altura: [],
   humedad: [],

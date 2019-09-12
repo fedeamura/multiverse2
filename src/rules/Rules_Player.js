@@ -36,12 +36,17 @@ const metodos = {
     const mapaCols = Parametros.mapaCols;
     const difCols = mapaCols - canvasCols;
 
-    return getSketch().createVector(offsetX + getSketch().floor((canvasRows + difRows) / 2), offsetY + getSketch().floor((canvasCols + difCols) / 2));
+    return getSketch().createVector(
+      offsetX + getSketch().floor((canvasRows + difRows) / 2),
+      offsetY + getSketch().floor((canvasCols + difCols) / 2)
+    );
   },
   reiniciarPosicion: () => {
     State.offsetX = 0;
     State.offsetY = 0;
-    State.player.pos = metodos.calcularPosicion();
+    let pos = metodos.calcularPosicion();
+    State.player.x = pos.x;
+    State.player.y = pos.y;
     State.player.dir = "d";
     State.player.dirContador = 0;
   },
@@ -86,7 +91,7 @@ const metodos = {
     if (dir == "u") offsetY_Nuevo--;
     if (dir == "d") offsetY_Nuevo++;
 
-    let posNueva = getSketch().createVector(player.pos.x, player.pos.y);
+    let posNueva = getSketch().createVector(player.x, player.y);
     posNueva.x += offsetX_Nuevo;
     posNueva.y += offsetY_Nuevo;
 
@@ -96,7 +101,9 @@ const metodos = {
       return;
     }
 
-    let m = State.mapa[posNueva.x][posNueva.y];
+    let chunk = Rules_Mapa.getChunkActual(posNueva.x, posNueva.y);
+    let pos = Rules_Mapa.getPosicionEnChunk(posNueva.x, posNueva.y);
+    let m = State.chunks["" + chunk][pos.i][pos.j];
     if (m.bloqueaElPaso()) {
       metodos.dejarDeMover();
       console.log("Hay un bloque que me obstruye el paso");
@@ -122,7 +129,6 @@ const metodos = {
     }
 
     //Mapa
-    Rules_Mapa.crearMapa();
 
     Rules_Juego.onMovido();
   },
@@ -148,38 +154,50 @@ const metodos = {
     player.moverBrazo();
     player.sumarHambre();
 
-    const pos = player.pos;
+    const posX = player.x;
+    const posY = player.y;
     let item;
     let posMirando;
 
     switch (player.dir) {
       case "l":
         {
-          if (pos.x == 0) return;
-          item = State.mapa[pos.x - 1][pos.y];
-          posMirando = getSketch().createVector(pos.x - 1, pos.y);
+          if (posX == 0) return;
+          let chunk = Rules_Mapa.getChunkActual(posX - 1, posY);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX - 1, posY);
+          item = State.chunks["" + chunk][pos.i][pos.j];
+          posMirando = getSketch().createVector(posX - 1, posY);
         }
         break;
       case "r":
         {
-          if (pos.x == State.mapa.length - 1) return;
-          item = State.mapa[pos.x + 1][pos.y];
-          posMirando = getSketch().createVector(pos.x + 1, pos.y);
+          if (posX == Parametros.mapaRows - 1) return;
+          let chunk = Rules_Mapa.getChunkActual(posX + 1, posY);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX + 1, posY);
+          item = State.chunks["" + chunk][pos.i][pos.j];
+
+          posMirando = getSketch().createVector(posX + 1, posY);
         }
         break;
       case "u":
         {
-          if (pos.y == 0) return;
-          item = State.mapa[pos.x][pos.y - 1];
-          posMirando = getSketch().createVector(pos.x, pos.y - 1);
+          if (posY == 0) return;
+          let chunk = Rules_Mapa.getChunkActual(posX, posY - 1);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX, posY - 1);
+          item = State.chunks["" + chunk][pos.i][pos.j];
+
+          posMirando = getSketch().createVector(posX, posY - 1);
         }
         break;
 
       case "d":
         {
-          if (pos.y == State.mapa.length - 1) return;
-          item = State.mapa[pos.x][pos.y + 1];
-          posMirando = getSketch().createVector(pos.x, pos.y + 1);
+          if (posY == Parametros.mapaRows - 1) return;
+          let chunk = Rules_Mapa.getChunkActual(posX, posY + 1);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX, posY + 1);
+          item = State.chunks["" + chunk][pos.i][pos.j];
+
+          posMirando = getSketch().createVector(posX, posY + 1);
         }
         break;
     }
@@ -187,7 +205,14 @@ const metodos = {
     const arma = player.arma;
 
     //Cavo (para hundir)
-    if (item.puedeHundir == true && item.hundido != true && (item.items || [].length) == 0 && arma instanceof Pala && !(item instanceof PisoAgua) && !(item instanceof PisoBase)) {
+    if (
+      item.puedeHundir == true &&
+      item.hundido != true &&
+      (item.items || [].length) == 0 &&
+      arma instanceof Pala &&
+      !(item instanceof PisoAgua) &&
+      !(item instanceof PisoBase)
+    ) {
       if (item.golpesHundir > 0) {
         item.golpesHundir -= 1;
       }
@@ -211,7 +236,10 @@ const metodos = {
     }
 
     //Jardinero
-    if (arma instanceof Pala && (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve || element instanceof Palo)) {
+    if (
+      arma instanceof Pala &&
+      (element instanceof Arbusto || element instanceof Flor || element instanceof Nieve || element instanceof Palo)
+    ) {
       poder = 1 + 0.5 * player.nivelJardinero;
     }
 
@@ -235,33 +263,43 @@ const metodos = {
   getItemMirando: () => {
     const player = State.player;
 
-    const pos = player.pos;
+    const posX = player.x;
+    const posY = player.y;
+
     let item;
 
     switch (player.dir) {
       case "l":
         {
-          if (pos.x == 0) return;
-          item = State.mapa[pos.x - 1][pos.y];
+          if (posX == 0) return;
+          let chunk = Rules_Mapa.getChunkActual(posX - 1, posY);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX - 1, posY);
+          item = State.chunks["" + chunk][pos.i][pos.j];
         }
         break;
       case "r":
         {
-          if (pos.x == State.mapa.length - 1) return;
-          item = State.mapa[pos.x + 1][pos.y];
+          if (posX == Parametros.mapaRows - 1) return;
+          let chunk = Rules_Mapa.getChunkActual(posX + 1, posY);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX + 1, posY);
+          item = State.chunks["" + chunk][pos.i][pos.j];
         }
         break;
       case "u":
         {
-          if (pos.y == 0) return;
-          item = State.mapa[pos.x][pos.y - 1];
+          if (posY == 0) return;
+          let chunk = Rules_Mapa.getChunkActual(posX, posY - 1);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX, posY - 1);
+          item = State.chunks["" + chunk][pos.i][pos.j];
         }
         break;
 
       case "d":
         {
-          if (pos.y == State.mapa.length - 1) return;
-          item = State.mapa[pos.x][pos.y + 1];
+          if (posY == Parametros.mapaRows - 1) return;
+          let chunk = Rules_Mapa.getChunkActual(posX, posY + 1);
+          let pos = Rules_Mapa.getPosicionEnChunk(posX, posY + 1);
+          item = State.chunks["" + chunk][pos.i][pos.j];
         }
         break;
     }

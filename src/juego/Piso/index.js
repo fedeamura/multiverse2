@@ -2,7 +2,8 @@ import { getSketch } from "_sketch";
 
 export default class Piso {
   constructor(pos, color) {
-    this.pos = pos;
+    this.x = pos.x;
+    this.y = pos.y;
     this.color = color;
     this.item = undefined;
     this.items = [];

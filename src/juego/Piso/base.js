@@ -1,4 +1,5 @@
 import { getSketch } from "_sketch";
+import Colores from "_colores";
 
 import Piso from "juego/piso/index";
 
@@ -16,6 +17,6 @@ export default class PisoBase extends Piso {
 }
 
 const getColor = centro => {
-  if (centro) return getSketch().color(255);
-  return getSketch().color("#212121");
+  if (centro) return Colores.baseCentro;
+  return Colores.base;
 };

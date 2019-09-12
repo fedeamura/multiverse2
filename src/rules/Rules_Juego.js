@@ -68,6 +68,8 @@ const metodos = {
       semilla.item.items = [];
       semilla.item.items.push(new Arbol());
     });
+
+    Rules_Mapa.actualizarChunks();
   },
   onItemGolpeado: (piso, item, poder) => {},
   onItemDestruido: (piso, item) => {

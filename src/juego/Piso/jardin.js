@@ -27,4 +27,3 @@ export default class PisoJardin extends Piso {
 const getColor = () => {
   return Colores.pasto1;
 };
-

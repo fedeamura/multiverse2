@@ -24,7 +24,6 @@ export default class PisoArena extends Piso {
   }
 }
 
-
 const getColor = () => {
   return Colores.arena;
 };
